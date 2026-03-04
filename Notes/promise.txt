@@ -1,0 +1,175 @@
+promise :
+	A Promise in JavaScript is an object that represents the eventual completion (or failure) of an asynchronous operation and its resulting value.
+	
+	`pending`   : Initial state; the async operation hasn’t completed yet 
+	`fulfilled` : The operation was successful (resolved)                 
+	`rejected`  : The operation failed (error occurred) \
+
+	Once a Promise becomes fulfilled or rejected, it’s considered settled (final state).
+	It can’t change its state again.
+	
+				  	   ┌──────────────┐
+					   │   Pending    │
+					   └──────┬───────┘
+							  │
+					┌─────────┴──────────┐
+					│                    │
+			    Fulfilled             Rejected
+					│                    │
+					└─────────┬──────────┘
+							  │
+						 Settled (final)
+
+	-------------------------------------------
+	const myPromise = new Promise((resolve, reject) => {
+		let success = false;
+		if (success) {
+			resolve("Promise resolved");
+		} else {
+			reject("promise rejected");
+		}
+	});
+	
+	myPromise
+	.then((res) => console.log(res))
+	.catch((err) => console.log(err))
+	.finally(() => console.log("promise completed"));
+------------------------------------------
+promise chaining:
+
+	Promise
+		.then()
+		.then()
+		.catch()
+		.finally()
+		
+	----
+	// promise chaining
+	new Promise((resolve) => {
+		setTimeout(() => {
+			resolve(10);
+		}, 2000);
+	})
+	.then((res) => res * 2)
+	.then((res) => res * 3)
+	.then((res) => console.log(res))
+	.catch((err) => console.log(err.message))
+	.finally(() => console.log("promise Completed"));
+	----
+		
+async-await:
+	Instead of chaining .then(), you can use async/await for cleaner code
+		-await makes JavaScript wait until a promise settles and returns its result.
+		-aync function always return promise
+	async function(){
+		try{
+		
+		}catch(){
+		
+		}
+	}
+	--------
+	function fetchData() {
+		return new Promise((resolve, reject) => {
+			setTimeout(() => {
+				resolve("data feteched successfully!");
+			}, 2000);
+		});
+	}
+		
+	async function getData() {
+		try {
+			const data = await fetchData();
+			console.log(data);
+		} catch (error) {
+			console.log(error.message);
+		}
+	}
+	getData();
+	--------
+------------------------------------
+
+promise methods:
+	
+	1. Promise.resolve(value) :
+		Creates a Promise that is already fulfilled with the given value
+	----------------
+	2. Promise.reject(error)
+		Creates a Promise that is already rejected with a given error.
+	---------------
+	3. Promise.all([ ...promises ])
+		Runs multiple Promises in parallel and waits until all succeed.
+		If any one fails, the whole Promise rejects.
+		
+		const p1 = Promise.resolve("a")
+		const p2 = Promise.resolve("b")
+		const p3 = Promise.resolve("c")
+		
+		Promise.all([p1,p2,p3])
+		.then(res=>console.log(res))
+		.catch(err=>console.log(err))
+		
+		//output:  [ 'a', 'b', 'c' ]
+	---------------
+	4. Promise.allSettled([...Promises])
+		Waits for all Promises to settle (either fulfilled or rejected).
+		It never rejects, it gives the status of each Promise.
+			const p1 = Promise.resolve("a")
+			const p2 = Promise.reject("b")
+			const p3 = Promise.resolve("c")
+			
+			Promise.allSettled([p1,p2,p3])
+			.then(res=>console.log(res))
+			.catch(err=>console.log(err))
+			
+			output:
+			[
+				{ status: 'fulfilled', value: 'a' },
+				{ status: 'rejected', reason: 'b' },
+				{ status: 'fulfilled', value: 'c' }
+			]
+	-----------------
+	5. Promise.race([ ...promises ])
+		Returns the first settled Promise (fulfilled or rejected).
+		
+			const fast = new Promise((res) => setTimeout(() => res("Fast"), 1000));
+			const slow = new Promise((res) => setTimeout(() => res("Slow"), 2000));
+			Promise.race([fast, slow]).then((value) => console.log(value));
+			
+			output:  Fast
+	-------------
+	6. Promise.any([ ...promises ])
+
+		Returns the first fulfilled Promise (ignores rejections).
+		If all fail → it rejects with an AggregateError.
+		
+			const p1 = Promise.resolve("a")
+			const p2 = Promise.reject("b")
+			const p3 = Promise.resolve("c")
+			
+			Promise.any([p1,p2,p3])
+			.then(res=>console.log(res))
+			.catch(err=>console.log(err))
+			
+			output:
+				first resolved promis - a
+	-------------
+	7. Promise.prototype.then()
+
+		Used to handle resolved values.
+	-------------
+	8. Promise.prototype.catch()
+
+		Handles rejected Promises.
+	------------
+	9. Promise.prototype.finally()
+
+		Runs code after Promise settles (fulfilled or rejected).
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Async and Await:
+
+async - make function return promise
+await - stops the function execution until promise settled (resolve/reject)
+
+

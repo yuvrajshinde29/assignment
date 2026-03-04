@@ -1,0 +1,38 @@
+.env:
+----------------------------------------------------------------------------------------------------------
+Environment Variables:
+	-Environment Variables are system-level key-value pairs used to configure how your application behaves — without hardcoding values inside your code.
+		They are often used to store:
+
+			API keys
+			Database connection strings
+			Ports
+			Secrets
+			Deployment settings (e.g. development, production)
+			
+	-they are key value pairs (like NAME = VALUE) use to store congfiguration outside the application code.
+	-helps to keep sensitive info(like API keys, DB passwords) safe and not hardcoded inside your code.
+	-makes app portable works accross dev/test/prod) 
+	- easy to change configuration without changing code.
+	-they externalize all environment specific aspects of your app and keep your app encapsulated. Now you can run your app anywhere by modifying the environment variables without changing your code and without rebuilding it!
+	
+	need to import dotenv package.
+	config dotenv
+	require("dotenv").config();
+	
+	process.env.VARIABLE_NAME
+	
+	1) setting and exporting them manually in a module
+		// config.js
+		const dotenv = require('dotenv');
+			dotenv.config();
+			module.exports = {
+			endpoint: process.env.API_URL,
+			masterKey: process.env.API_KEY,
+			port: process.env.PORT
+		};
+	2) use a library to read and export them in a module
+		
+	----
+	1) the npm scripts outline
+	2) the npm extension

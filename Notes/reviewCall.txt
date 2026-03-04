@@ -1,0 +1,67 @@
+1
+------------------------------------
+Generate a dictionary which stores the count of appearance of character in string
+Input: aabbcdddededfg
+Output= {“a”: 2, “b”: 2, “c”: 1, “d”:5, “e”:2, “f”:1, “g”:1}
+
+function appearanceOfString(str){
+    let obj = {}
+    for(let i of str){
+        if(!obj[i]){
+            obj[i]= 1;
+        }else{
+            let prevCount = obj[i]
+            obj[i] = prevCount + 1
+        }
+    }
+    console.log(obj)
+}
+appearanceOfString("aabbcdddededfg")
+------------------------------------
+console.log(1);
+setTimeout(() => console.log(2), 0);
+console.log(3);
+
+
+how can i pprint
+1,
+2,
+3
+in this sequence
+
+await is wait for promise and setTimeout return timer id so wrap timeout in promise.
+console.log("1")
+
+await new Promise((resolve)=>{
+    setTimeout(()=>{
+        console.log("2");
+		resolve(4)
+    },0)
+    
+})
+console.log("3")
+------------------------------------
+when we use async await?
+------------------------------------
+why you use await infront of settimeout?
+-> to stop execution of function until timeout print log("2") but i never waited because of setTimeout is not returning promise it gives timer id so await works with promises
+so why that approach not work?
+------------------------------------
+let x = 1;
+
+if (function f() {}) {	console.log(function f() {} ); //[Function: f] --object //truthy
+  x += typeof f;	
+}
+
+console.log(x);
+output: 1undefined
+---
+A function expression defines a name that is only available inside itself, not outside
+(function f() {
+    console.log(typeof f); // 'function'
+});
+console.log(typeof f); // 'undefined' — f not defined here
+------------------------------------
+pls focus on js tricky, async await, settiout part
+
+-array flattening

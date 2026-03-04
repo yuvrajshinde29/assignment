@@ -1,0 +1,267 @@
+| Type              | Convention          | Example                                  |
+| ----------------- | ------------------- | ---------------------------------------- |
+| Variables         | `camelCase`         | `userName`, `totalAmount`                |
+| Constants         | `UPPER_SNAKE_CASE`  | `MAX_CONNECTIONS`, `API_KEY`             |
+| Functions         | `camelCase`         | `getUserData()`, `calculateTotal()`      |
+| Async Functions   | `camelCase + Async` | `fetchUserAsync()`                       |
+| Classes           | `PascalCase`        | `User`, `OrderService`                   |
+| Private Variables | `_camelCase`        | `_password`, `_secretToken`              |
+| Files             | `kebab-case.js`     | `user-controller.js`, `order-service.js` |
+| Folders           | `kebab-case`        | `controllers/`, `models/`, `utils/`      |
+--------------------------------------------------------------------------------------
+#
+| Type            | Convention             | Example                               |
+| --------------- | ---------------------- | ------------------------------------- |
+| Controllers     | `PascalCase`           | `UserController.js`                   |
+| Services        | `PascalCase`           | `AuthService.js`                      |
+| Middlewares     | `camelCase`            | `authMiddleware.js`                   |
+| Routes          | plural + kebab-case    | `/api/users`, `/api/orders`           |
+| Utils / Helpers | camelCase / kebab-case | `dateFormatter.js`, `calculateTax.js` |
+-------------------------------------------------------------------------------------------
+#DataBase
+| Type                 | Convention                        | Example                      |
+| -------------------- | --------------------------------- | ---------------------------- |
+| Models               | `PascalCase`                      | `User`, `OrderItem`          |
+| Tables               | `snake_case` plural               | `users`, `order_items`       |
+| Columns              | `snake_case`                      | `first_name`, `total_amount` |
+| Foreign Keys         | `[related_model]_id`              | `user_id`, `order_id`        |
+| Associations Methods | `addX`, `getX`, `setX`, `removeX` | `addPost()`, `getComments()` |
+-------------------------------------------------------------------------------------------
+#Rest API:
+| Type              | Convention          | Example                                       |
+| ----------------- | ------------------- | --------------------------------------------- |
+| Endpoints         | plural + kebab-case | `/users`, `/order-items`                      |
+| Query Params      | `camelCase`         | `/users?startDate=2025-01-01`                 |
+| Request Body Keys | `camelCase`         | `{ firstName: "Yuvraj" }`                     |
+| HTTP Methods      | Semantic            | `GET /users`, `POST /users`, `PUT /users/:id` |
+-------------------------------------------------------------------------------------------
+#Git :
+| Type          | Convention    | Example                                    |
+| ------------- | ------------- | ------------------------------------------ |
+| Branches      | `kebab-case`  | `feature/add-login`, `bugfix/fix-user-api` |
+| Commits       | Present tense | `Add user authentication`                  |
+| Project Names | kebab-case    | `node-api-starter`                         |
+
+
+================================================================================================================================================================
+Node JS Architecture Coding Convention:
+https://docs.google.com/document/d/1HPMsnA5n3nrOCw2IYj3-x4-_cFYeNFogjZcQ0yfhRyI/edit?tab=t.0
+
+	1. Code Standards:
+		organize files around features not role/layer base
+		
+		// dont
+		
+		|
+		|--controllers
+		|		|
+		|		|--product.js
+		|		|--user.js
+		|--model
+		|		|
+		|		|--product.js
+		|		|--user.js
+		|--views
+		|		|
+		|		|--product
+		|		|--user
+		
+		Reason:
+			The problems with this approach are:
+				-to understand how the product pages work, you have to open up three different directories, with lots of context switching,
+				-you end up writing long paths when requiring modules: require('../../controllers/user.js')
+			
+		Do:
+			/src
+			├── /product
+			│    ├── index.js
+			│    ├── product.js
+			│    └── product.hbs
+			├── /user
+			│    ├── index.js
+			│    ├── user.js
+			│    └── user.hbs
+		
+		
+			------------------or---------------------
+			Many modern projects adopt a hybrid approach: organizing primarily by feature while structuring within features by layers to maximize clarity and maintainability.
+			/src
+			├── /user
+			│    ├── user.controller.js
+			│    ├── user.routes.js
+			│    ├── user.model.js
+			│    └── user.service.js
+			├── /products
+			│    ├── product.controller.js
+			│    ├── product.routes.js
+			│    ├── product.model.js
+			│    └── product.service.js
+		----------------------------------
+		-Use a config folder to organize configuration files
+			To place your configuration files, use a config directory.
+	--------------------------------------------------------------------	
+	2. Naming Conventions:
+		-snake Case: Words are written in lowercase and  seperated by uderscore.
+		ex- user_profile, max_value
+		used in database tables and columns
+		in environment variables but letters are uppercase
+		
+		-Pascalcase: Every word start with capital letter.
+			Commonly used for class names, interface names
+			Ex- UserProfile, CustomerOrder
+			
+		-Camelcase:Words are delimited by capital letters, except the initial word.
+			Ex- userName, totalAmount
+			camelCase is commonly used for variable names, function names, properties, and method names
+			
+		-Hungarian Notation: 
+			This notation describes the variable type or purpose at the start of the variable name, followed by a descriptor that indicates the variable’s function. The Camelcase notation is used to delimit words.
+
+			ex-
+			arrUniqueValues 	//array called "unique values"
+			sUserName			//string called "user names"
+			iRandomSeed			//integer called "random seed"
+			
+		-Function and Class Naming conventions
+			An important aspect of naming is to ensure your classes, functions, and variables can be distinguished from each other. For example, one could use Camelcase and Pascalcase for functions and classes respectively, while reserving Snake Case or Hungarian notation for variable names. Distinguishing functions, classes, and variables with different naming conventions can greatly aid other users of your code, and can eliminate the need for large sections of comments that would otherwise be needed. No. of lines of code in Function, Method and Class should be 30-40 lines.
+	---------------------------------------------------------
+	3. Comments in your code:
+		Commenting may be the most important way to organize and segment code. Comments are sections of code that the compiler ignores, which are useful to label code and segment code.
+	---------------------------------------------------------
+	4. Documenting code:
+	---------------------------------------------------------
+	5. Functions, Classes & Imports:
+		functions provide better modularity and code reuseability.
+			
+	---------------------------------------------------------
+	6. DRY Principle (Don't repeat yourself):
+		
+	---------------------------------------------------------
+	7. Avoid hard coded strings:
+	
+		don't:-
+			const secretKey = "ldbcznxznmznfr"
+			
+		Do:-
+			const secretKey = Process.env.SECRET_KEY || config.development.SECRET_KEY || "your-secret-key"
+	---------------------------------------------------------
+	8.  Handling exceptions or errors:
+	
+		-Error Handling Middleware:
+			
+			app.use((err, req, res, next)=>{
+				//logic 
+			});
+			
+		-Error wrapper function
+			Always use Wrapper function by which the main controller and services code is wrapped inside try catch , so if any thing break while execution will directly pass not the next middleware and catch at global error Handler
+		
+		-Proper Implementation of try catch wherever is required.
+			Wherever necessary like creating a database connection , always write the code inside try catch , this will prevent the future code break issue
+		
+		-uncaughtException:
+		
+			process.on(‘uncaughtException’,()=>{
+				console.log(“uncaught Exception”) //Handle //uncaughtException here
+			})
+			
+			uncaughtException is an error that occurs during program execution but it not handled by try-catch bolck or error handler.
+			when such exception occurs program may crash unless special global error handlers are implemented.
+			
+			Uncaught Exception in Node.js
+					Node.js emits an uncaughtException event on the global process object when an error is not caught.
+					This event allows for last-minute cleanup or logging before the process exits.
+					
+		-unhandledRejection:
+			process.on(unhandledRejection,()=>{
+				console.log(“ unhandled Rejection”);
+			})
+	---------------------------------------------------------
+	9. Error Message
+	
+		1. Be Descriptive and Specific
+			Explain what went wrong and why.
+			Avoid generic messages like Error occurred. Instead, use something like: throw new Error("Connection failed: Unable to reach database at db.example.com.");
+			
+		2. Use language understandable to the target audience.
+			Instead of:
+				Invalid socket operation.
+				bankName is required
+			Use: 
+			Unable to connect: Network connection was closed unexpectedly.
+			Bank name is required
+		3. Use Proper Grammar and Punctuation
+			Ensure messages are clear and professional.
+			Like: SyntaxError: Missing semicolon at line 5.
+
+	---------------------------------------------------------
+	10. Function Naming Conventions
+		1. Use Descriptive Name
+		Function names should clearly describe what the function does.
+		
+		// Good
+			function calculateTotalPrice(items) {}
+		
+		// Bad
+			function calc(items) {}
+		
+		2. Use Verb-Object Structure
+			Functions often perform actions, so use verbs to indicate the operation.
+		// Good
+			function fetchUserData() {}
+			function updateProfilePicture() {}
+		
+		// Bad
+		function userData() {}
+		function profilePicture() {} 
+		
+		3. Boolean Functions Should Use is, has, or can
+			function isUserLoggedIn() {}
+			function hasPermission() {}
+			function canEditDocument() {}
+			
+		4. Avoid Abbreviations
+		
+			Use full words unless the abbreviation is widely 
+			// Good
+				function calculateDistance() {}
+			
+			// Bad
+				function calcDist() {}
+===========================================================================================
+Naming conventions for Git Branches:
+---------------------------------------------------------
+Basic Rules-
+	Lowercase and Hyphen-seperated:
+		-stick to lowercase for branch names and hyphens to seperate words.
+		ex- feature/new-login
+	
+	Alphanumeric Characters:
+		Use only Alphanumeric Characters(a-z, A-Z, 0-9) and Hyphen
+	No continuous Hyphens:
+	No Trailing Hyphens
+	Descriptive: 
+		name should be descriptive,concise, and reflection work done on the branch
+		
+Branch Prefixes:
+	use prefix in branch name helps to quickly identify the purpose of the branches
+	
+	- feature Branch :
+		used for developing new features
+		use prefix feature/
+	-Bugfix Branches
+		use to fix bugs in code
+		prefix bugfix/
+	-Documentation Branch
+		these branches are use write, uodate,or fix documentation ex-README file
+		prefix- docs/
+	-Hotfix Branches:
+		prefix- hotfix/
+		these branches are directly made from production branch to fix critical bugs
+	-Release Branch:
+		use prepare for new production release
+		prefix- release/
+		
+Including Jira (or other Project Management Tool) Ticket Numbers
+	in larger teams its common to include ticket number from management tool like jira in branch name it make easy to track work done on specific Ticket
+================================================================================================================================================================

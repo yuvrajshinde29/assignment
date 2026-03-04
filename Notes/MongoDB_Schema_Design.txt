@@ -1,0 +1,340 @@
+
+
+1. Basic concepts:
+	Database: A logical group of collection
+	Collection: equivalent to a tables in sql - stores documents of related types 
+	Document: a JSON like object(BJSON) key- value pair that represent data records
+	field: key-value pair within a document
+		{
+		"_id": ObjectId("..."),
+		"name": "Alice",
+		"email": "alice@example.com",
+		"orders": [
+			{ "order_id": 123, "total": 49.99 },
+			{ "order_id": 124, "total": 19.99 }
+		  ]
+		}
+2. Embedding vs Referencing
+	two main approaches for releationship between entities
+	
+	Embedding(Denormalization):
+		store reeleated data in single document
+		
+		When to use:
+			Data is accessed together.
+			One-to-few or one-to-many relationship.
+			Document size < 16MB (MongoDB’s document limit).
+			
+		Ex-
+			{
+			"user_id": 1,
+			"name": "Alice",
+			"addresses": [
+				{ "street": "123 Main St", "city": "New York" },
+				{ "street": "456 Pine Rd", "city": "Boston" }
+			]
+			}
+	---------------------------------------------------------
+	referencing(normalization):
+		store related data in seperate documents and link via id's
+		
+		When to use:
+
+			Data is large or changes frequently.
+			Many-to-many or one-to-many with large lists.
+			You want to avoid document growth issues
+			Infrequently accessed data not access on every query
+			
+		Ex-
+		// users
+			{
+				"_id": 1, 
+				"name": "Alice" 
+			}
+			
+			// orders
+			{
+				"_id": 1001, 
+				"user_id": 1, 
+				"total": 99.99 
+			}
+	---------------------------------------------------------
+	outlier Pattern:
+		handle outlier documents that are much larger or different than normal ones by spliting them off.
+		
+		Ex-
+			Most users have 10 posts, but one user has 10,000 posts.
+			You can move that user’s posts to a separate collection:
+			
+			// Regular users
+			{
+				
+				"_id": 1, 
+				"name": "Alice", 
+				"posts": [101, 102, 103] 
+			}
+
+			// Outlier user
+			{
+					
+				"_id": 999, 
+				"name": "MegaPoster", 
+				"posts_ref": "posts_999"  // Reference to another collection
+			}
+
+	---------------------------------------------------------------
+	| Relationship Type        | Best Approach                       |
+| ------------------------ | ----------------------------------- |
+| One-to-One               | Embed (unless either side is large) |
+| One-to-Few               | Embed                               |
+| One-to-Many              | Embed if small, Reference if large  |
+| Many-to-Many             | Reference                           |
+| One-to-Squillions (Huge) | Reference or bucket pattern         |
+
+	------------------------------------------------------------------
+	1. one to one :
+	
+		One document is related to exactly one other document.
+		Ex- A user has one profile.
+		{
+			"_id": 1,
+			"name": "Alice",
+			"profile": {
+				"age": 25,
+				"bio": "Software Engineer"
+			}
+		}			
+	------------------------------------------------------------------
+	2. One-to-Few
+		One document has a small number of related documents.
+		
+		Ex- A user has a few addresses.
+		
+		{
+			"_id": 1,
+			"name": "Alice",
+			"addresses": [
+				{ "city": "New York", "zip": "10001" },
+				{ "city": "Boston", "zip": "02118" }
+			]
+		}
+			
+	------------------------------------------------------------------
+	3. one to many:
+		One document is related to many others
+		
+		Ex- A user has many orders.
+		Option 1: Embed (if small)
+		{
+			"_id": 1,
+			"name": "Alice",
+			"orders": [
+				{ "order_id": 101, "total": 59.99 },
+				{ "order_id": 102, "total": 89.99 }
+			]
+		}
+		Option 2: Reference (if large)
+		// users
+		{ "_id": 1, "name": "Alice" }
+		
+		// orders
+		{ "_id": 101, "user_id": 1, "total": 59.99 }
+		{ "_id": 102, "user_id": 1, "total": 89.99 }
+		
+	------------------------------------------------------------------
+	4. One-to-Squillions
+		One document is related to a huge number of others (tens of thousands or more).
+		
+		Ex- A celebrity user with millions of followers.
+		Use Referencing
+		// users
+		{ "_id": 1, "name": "Celebrity" }
+		
+		// followers
+		{ "_id": 501, "user_id": 1, "follower_id": 22 }
+		{ "_id": 502, "user_id": 1, "follower_id": 23 }
+		
+	------------------------------------------------------------------
+	5. Many-to-Many (M:N)
+		Each document in one collection can relate to many in another — and vice versa.
+		
+		Ex- Students enrolled in many courses,
+			and courses have many students.
+			
+			// students
+			{ "_id": 1, "name": "Alice", "course_ids": [101, 102] }
+			
+			// courses
+			{ "_id": 101, "title": "Math", "student_ids": [1, 2] }
+			
+=======================================================================================================================================
+=======================================================================================================================================
+MongoDB Schema Design:
+
+	Relaional :
+	Users:-
+	id 		first_name 		surname 		call		city 		
+	
+	Professions:-
+	id 		user_id 		profession
+	
+	Cars:-
+	id 		user_id		model 		year
+	
+	MongoDB-
+		{
+			first_name:"abc",
+			surname: "xyz",
+			call: "1231232321",
+			city: "pune",
+			cars: [
+						{
+							model : "",
+							year: 1990
+						},
+						{
+							model : "",
+							year: 1999
+						},
+				  ]
+		}
+	
+	Embedding vs Referencing:
+		
+		Embedding:
+		
+			pros  :                               			
+			-Retrive all data with single query		
+			-Avoid expensse JOINs or $lookup
+			-Update all data with a single automic operation
+			
+			cons :
+			-Large docs === more overhead
+			-16 MB Document size limit
+		
+		Referencing:
+	 		
+			pros :
+			-smaller documents
+			-less likely to reach 16 MB limit
+			-no duplication of data
+			-Infrequently accessed data not access on every query
+			
+			cons :
+			two queries or $lookup required to retrive all data
+			
+	one to one :
+		use key-value pairs
+			User:
+				{
+					_id: ObjectId("AAA"),
+					name: "abc",
+					company:"MongoDB"
+				}
+	
+	one to few :
+				{
+					_id: ObjectId("AAA"),
+					name: "abc",
+					company:"MongoDB",
+					Addresses: [
+						{ street:"123 Avenue Q", city:"new york", cc:"USA"},
+						{ street:"123 Avenue Q", city:"new york", cc:"USA"},
+					]
+				}
+	note-
+		1. faver embedding unless their is a compelling reason not to.
+		2. Needing to accesss an object on its own is a compelling reason not to embed it. 
+		3. Avoid joins and $lookups if they can be, but dont be afraid if they can provide a better schema design.
+		4. Array should not grow without bound
+		
+	one to many :
+	
+		Products:
+		{
+			_id: ObjectId("123"),
+			name: "",
+			parts:  [
+						ObjectId("AAA"),--------
+						ObjectId("BBB"),
+					]
+		}
+		
+		Parts 
+		{
+			_id: ObjectId("AAA"),-----------
+			partno: "123-abc-688",
+			name: ""
+		}
+		
+	one to Squillions
+		
+		Hosts:
+		{
+			_id: ObjectId("AAA"),
+			name: ""
+		}
+		
+		Log Message:
+		{
+			_id: ObjectId("123"),
+			message:"",
+			time:"",
+			host: ObjectId("AAA")
+		}
+		{
+			_id: ObjectId("456"),
+			message:"",
+			time:"",
+			host: ObjectId("AAA")
+		}
+		
+	Many to many:
+		Person:
+		{
+			_id: ObjectId("AAF1),
+			name: "abcd",
+			tasks: [
+					ObjectId("ADF9"),
+					ObjectId("AEO2"),
+				]
+		}
+		
+		Tasks:
+		{
+			_id: ObjectId("ADF9"),
+			descripion: "Learn MongoDB",
+			owners: [
+						ObjectId("AAF1"),
+					]
+		},
+		{
+			_id: ObjectId("AEO2"),
+			descripion: "Learn Node",
+			owners: [
+						ObjectId("AAF1"),
+					]
+		},
+		
+
+
+=======================================================================================
+MongoDB Schema Design Best Practices and Techniques:
+	-Document based schema design provides sigificant advantage in managing complex, dynamic data  modules (unlike traditional relational DB's Mongo dont enforce rigid schemas)
+		
+		1. Document Data Model
+			data is stored in BJSON(Binary json)format.
+			support more data types than json such as date, ObjectId, timestamp
+			
+		
+	Design best Practices and Techniques to optimize performance , scalability, ease of data management, improve read and write operations while minimizing storage requirements.
+	
+		-embedding:
+		
+		-referencing:
+		
+		-denormalization:
+		
+		-indexing:
+		
+		-sharding:

@@ -1,0 +1,262 @@
+NodeJS:
+	it is runtime environment thet allows you to run js outside browser
+	-it let you use js to build backend (server side) applications.
+	---------------
+	Features of node.js 
+| Feature                         | Description                                                                                              |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Asynchronous & Non-blocking** | Node.js uses an **event-driven** model — it doesn’t wait for one task to finish before starting another. |
+| **Single-threaded**             | Uses one main thread but can handle **thousands of connections** efficiently.                            |
+| **Fast execution**              | Powered by the **V8 engine**, which compiles JS directly to machine code.                                |
+| **Cross-platform**              | Runs on Windows, macOS, and Linux.                                                                       |
+| **NPM (Node Package Manager)**  | Comes with a vast library of reusable packages.                                                          |
+----------------------------------------------------------------------------------------------------------------------------------------------
+Importing and creating modules:
+	A module is a JavaScript library/file that you can import into other code.
+	
+	-keep code organized.
+	-easy to maintain
+	
+------------------------------------------------------------------------------------
+Types of Modules:
+	1. Built-in modules(provided by Node.js)
+		Ex- fs, os, path, http
+	2. userdefined modules
+		
+	3. Third-party modules (installed using npm)
+		example - express, mongoose, 
+--------------------------------------------------------------
+common js module:
+	to import require()
+	to export:
+		// Option 1: Export a single value
+			module.exports = someValue;
+
+		// Option 2: Export multiple properties
+			exports.name = someValue;
+-------
+ES6 Module version(morden syntax)
+	package.json
+		{
+			"type" : "module"
+		}
+		
+	import :
+		import x from 'x';            // default import
+		import { add, subtract } from './math.js'; // named import
+		
+	export :
+		// Export a single default value
+		export default function greet() {}
+		// export default (a, b) => a + b;
+		
+		// Export multiple items
+		export function add(a, b) {}
+		export const add = (a, b) => a + b;
+-----------------------------------------------------------------------------------
+What is a Route Handler?
+
+A route handler is a function that runs when a specific URL (route) and HTTP method (GET, POST, etc.) are requested by the client.
+	-----------
+	Method 1: Using Node’s Built-in http Module
+		-----------
+		const http = require('http');
+
+		const server = http.createServer((req, res) => {
+			// Set response header
+			res.setHeader('Content-Type', 'text/plain');
+		
+			// Route handling
+			if (req.url === '/' && req.method === 'GET') {
+				res.end('Welcome to the Home Page');
+			} 
+			else if (req.url === '/about' && req.method === 'GET') {
+				res.end('This is the About Page');
+			} 
+			else {
+				res.statusCode = 404;
+				res.end('404 - Page Not Found');
+			}
+		});
+		
+		server.listen(3000, () => {
+		console.log('Server running at http://localhost:3000');
+		});
+	-----------
+	Method 2: Using Express.js
+	
+		const express = require('express');
+		const app = express();
+		
+		app.get('/', (req, res) => {
+		res.send('Welcome to the Home Page');
+		});
+		
+		// Start server
+		app.listen(3000, () => {
+		console.log('Server is running on http://localhost:3000');
+		});
+-----------------------------------------------------------------------------
+ middleware:
+ 
+	functions that have access to the request object (req), the response object (res), and the next middleware function in the applications request-response cycle. 
+	
+	Function that runs before your route handler.
+	
+	-------------
+	Middleware function structure:
+	
+		app.use((req, res, next) => {
+			console.log('Middleware executed!');
+			next(); // Pass control to next middleware or route handler
+		});
+		
+		req - request obect
+		res - response object
+		next() - function that moves to next middleware. if you don't call next the request stop there wont reach request handler.
+	-------------
+	Types of Middleware:
+		
+		Application-level      Applied to all routes                          app.use(...)            
+		Router-level           Applied only to specific routes                router.use(...)         
+		Built-in               Provided by Express (e.g., `express.json()`)   app.use(express.json()) 
+		Third-party            Installed via npm                              app.use(morgan('dev'))  
+		Error-handling         Has 4 parameters (`err, req, res, next`)       Used to catch errors      
+		
+		-------------------------------------------
+		
+		// Insert a key value pair in req in middleware
+		app.use((req, res, next) => {
+			req.user = { role: "customer" };
+			next();
+		});
+		
+		// Throw error from middleware
+		app.use((req, res, next) => {
+			if (req.user.role !== "admin") {
+				next(new Error("Invalid user"));
+				return;
+			}
+			next();
+		});
+		
+		app.use("/", routes); //routes...
+		
+		// Error handler middleware
+		app.use((err, req, res, next) => {
+			console.log(err.message);
+			res.send(err.message);
+		});
+		
+		
+	---------------------------------------------------------
+		next('error') express treat it as an error and skip all normal middlewares, Passes control to error-handling middleware
+		
+		
+		
+		
+		
+		
+	------------------------------------------------------------------------------------------------------------------
+	Serving static files:
+		Static files are the assets that don’t change on the server side —
+		they’re directly sent to the client as-is.
+
+		Examples:
+
+			HTML pages (index.html)
+			CSS files (style.css)
+			JavaScript files (main.js)
+			Images, fonts, videos, etc.
+			
+	-express.static() - biltin middleware to serve static files
+		app.use(express.static('folder'))
+		
+		project/
+		│
+		├── public/
+		│   ├── index.html
+		│   ├── about.html
+		│   ├── style.css
+		│
+		└── app.js
+	Custom route prefix :
+		app.use('/static', express.static('folder'))
+			- 	 	express serves the contents of public folder, but make them available only under the URL  path http://localhost:3000/static
+			and your HTML file should reference them with the same prefix.
+			
+			public/index.html
+				<!DOCTYPE html>
+				<html>
+				   <head>
+
+					<!-- must include the /static prefix -->
+					<link rel="stylesheet" href="/static/style.css">
+				
+				   </head>
+	--------------------------------------------
+	Error handling:
+		catching and managing errors that occurs while processing request- insted of crashing your express app, you send proper error response.
+		
+		use try catch and pass error to error handling middleware 
+		
+		error handling middleware:
+		
+		app.use((err, req, res, next)=>{
+			console.error(error.stack)
+			res.status(500).send({error : error.message})
+		})
+		
+		-you can Creating a Reusable Async Wrapper to avoid use of try-catch in every route.
+		
+			const asyncHandler = (fn) => (req, res, next) =>
+			Promise.resolve(fn(req, res, next)).catch(next);
+			
+			app.get('/data', asyncHandler(async (req, res) => {}
+			
+		- centralized Error middleware:
+			to handle all app error in one place
+			
+		-Handling 404 Errors (Route Not Found)
+			Always put this after all other routes
+				
+				app.use((req, res, next) => {
+					res.status(404).json({ error: 'Route not found' });
+				});
+	------------------------------------------------
+	connecting data base
+	
+	
+------------------------------------------------------------
+	Rendering views(data)
+	
+		Express takes a template file (like .ejs, .pug, or .hbs) and injects dynamic data into it, then sends back the final HTML to the browser.
+		
+		setting up a view engine
+			 
+			// install- npm i ejs
+			 
+			// then in app Set EJS as the view engine
+				
+				app.set("view engine" , "ejs");
+				
+			// Specify folder for views (default is "views")
+				
+				app.set("views", path.join(__dirname, "views"));
+				
+			// rendering view with data:
+			
+				res.render('index', { user });	--index is index.ejs tempete file
+			
+			//inside index.ejs
+			
+				 <h1>Hello, <%= user.name %>!</h1>
+				 <p>Your age is <%= user.age %>.</p>
+				 
+			// Using Layouts or Partials (Reusable Templates)
+			
+				index.ejs
+				<%- include('partials/header') %>
+				<h2>Welcome to Homepage</h2>
+				<%- include('partials/footer') %>
+//--------------------------------------------

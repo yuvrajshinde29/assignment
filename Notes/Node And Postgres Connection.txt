@@ -1,0 +1,61 @@
+Learn and implement to Push the data to Postgres:
+
+1. install "pg"
+
+2.configure db
+	const { Pool } = require("pg");
+
+	const pool = new Pool({
+		user: "postgres",
+		host: "localhost",
+		database: "postgres",
+		password: "Nimap@29",
+		port: "5432",
+	});
+	
+	async function connectDB() {
+		try {
+			const clint = await pool.connect();
+			console.log("connected to postgress");
+			clint.release(); //release connection to pool
+		} catch (error) {
+			console.error("connection error : ", error.stack);
+		}
+	}
+	connectDB();
+	module.exports = pool;
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------
+-When you insert or update data in PostgreSQL, you can add a RETURNING clause to get back the inserted (or updated/deleted) row(s) immediately — without running another SELECT query.
+-SERIAL is a special data type in PostgreSQL used to create an auto-incrementing integer column — typically used for primary keys (IDs).
+-JSONB = JSON Binary
+It’s a PostgreSQL data type used to store JSON (JavaScript Object Notation) data efficiently.

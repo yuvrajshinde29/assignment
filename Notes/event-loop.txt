@@ -1,0 +1,67 @@
+Event Loop, Call stack, call back queue, Microtask queue, Browser function:
+--------------------
+we have call stack and
+function a(){
+	console.log("a");
+}
+a();
+console.log("end");
+--
+1) global execution context get created first
+	- then  code get executed line by line 
+	- function a get stored in memory
+	- at calling a() execution context get created 
+		- function a get executed line by line
+		- after end of it get pop up outside the call stack
+	- then end get log and also end of globla execution context so it also get pop up call stack is now empty.
+	
+-------------------------------------
+browser web API'S 
+	- setTimeout()
+	- DOM API's (Document object module)
+	- fetch()
+	- localStorage
+	- console
+	- location
+	
+browser gives access to browser apis through Window object(it is global object)
+
+	- when we write setTimeout we dont write window.setTimeout etc because it is global object we can directly access it 
+	
+-------------------------------------
+when execution complets of async task its callback put inside callack queue
+
+event loop is middle man that puts callbacks from callack queue to call stack and contiuously check call stack is empty
+
+in event listener the event is added to the callback
+
+micro task queue:
+	higher priority than call back queue.
+	what come inside microtask - promise, mutation observer
+------	
+Starvation of callback queue:
+	
+	
+js work son single thing but browser works on multile things in background
+
+==================================================
+Execution Context:
+---------
+https://www.freecodecamp.org/news/execution-context-how-javascript-works-behind-the-scenes/
+----------
+execution context is a conceptual environment where JavaScript code is evaluated and executed.
+types of execution context:
+	Global Execution Context:
+		 The base execution context for any JavaScript code that is not inside a function. There is only one GEC per JavaScript file.
+	FUnction execution context:
+		Created whenever a function is invoked. Each function call gets its own FEC
+
+==================================================
+Browser Functions:
+	setTimeout()
+	setInerval()
+	fetch()
+	XMLHttpRequest:
+		-XMLHttpRequest (XHR) is a JavaScript API that enables web browsers to make HTTP requests to web servers and receive responses without requiring a full page reload.
+		-
+	DOM manupulation functions

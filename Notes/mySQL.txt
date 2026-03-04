@@ -1,0 +1,376 @@
+Designing Database:
+
+	https://members.codewithmosh.com/courses/525068/lectures/9710692
+	
+	Data Modeling
+		-Understanding the requirements
+		-Build a Conceptual Model
+			Represents the entities and their relationships
+				Entity Relationship(ER)
+				UML
+				
+				tools to design - Microsoft Viso, deaw.io, LucidCharts
+		-build a logical model
+		-Build a physical model
+		-primary key 
+		-foregin key
+		-foregin key constraints on delete / update cascade/set null
+		
+		-Normalization:is dividing large database table into smaller ones and establishing relationships between them to avoid data redudency and provide robostness
+			-1NF:
+				attribute contain same type of data
+				each attribute have single value
+				no repeated columns
+			-2NF:
+			-3NF:
+			-4NF:
+			-FNF
+		forward engineering a model-
+			-converting your data model (usually an ER diagram or ORM model definition) into an actual database schema
+			-in sequelize we do forward engineering using sequelize.sync()
+		sychronizing a model with database:
+			
+		reverse engineering-
+			you start with an existing database and generate the ER diagram, ORM models, or schema documentation
+		
+		creating and droping databases:
+			create database if not exists database_name;
+			
+		creating tables:
+			-creating tables:
+			drop table if exists table_name;
+			create table table name if not exists(columns...);
+			
+		alter:
+			alter table customer
+			add last_name varchar(255) not null after first_name,
+			modify column first_name varchar(255) default '',
+			drop points;
+			
+		creating relaionships:
+			create table orders (..., foregin key fk_orders_customers(customer_id) references customer(customer_id))
+		
+		Altering foregin key and primary key columns
+		
+			alter table orders
+				drop foregin key fk_orders_customers,
+				add foregin key fk_orders_customers (customer_id) references customer(customer_id)
+				on update cascade
+				on delete no action
+				
+		character sets and collections:
+			A character set is a set of symbols (characters) and their binary representation that the database can store.
+
+			It defines what characters are allowed in a column.
+
+			CREATE TABLE users (
+				name VARCHAR(100) CHARACTER SET utf8mb4
+			);
+
+			-collection:
+				A collation is a set of rules that determine how text is sorted and compared.
+				Character set = allowed characters
+				Collation = sorting/comparison rules
+				
+				
+		storage engine:
+			InnoDB default engine - transaction support,
+			
+			how specify a storage engine
+				create table table_name(
+				
+				) ENGINE=InnoDB;
+				
+	-----------------------------------
+	indexing for high performance:
+		improves the speed of data retrieval operations on a table at the cost of additional storage and slightly slower writes (INSERT, UPDATE, DELETE).
+		
+		clustered index
+		non-clustered index
+			
+		disadvantages of indexing:
+			take more memory
+			slow down write
+		-indexes are created based on queries
+		-they get stored in form of binary tree
+		
+		creating indexes:
+		1.	primary key (default index):
+			
+		2. unique index:
+			CREATE UNIQUE INDEX index_name on table_name(col_name)
+			
+		3. composite index:
+			index on two or more columns together.
+			store index entries in a sorted order on order of columns in the index.
+			
+				CREATE INDEX index_name on table_name(col_name1, col_name2);
+				
+				Left most prefix rule:
+					mysql can use the index only for filters starting from the leftmost columns from the index
+					
+					if create :
+						CREATE INDEX idx_name_city ON users(first_name, last_name);
+					then MySQL can use this index for
+						WHERE first_name = 'Yuvraj'	✅ Yes
+						WHERE first_name = 'Yuvraj' AND last_name = 'Shinde'	✅ Yes
+						WHERE last_name = 'Shinde'	❌ No
+			
+		4. prefix index
+			prefix index created for string columns where first n characters(a prefix) of column value are indexed insted of entire value. 
+				-save space for longer column values
+				
+				CREATE INDEX index_name on table_name(column_name(N))
+				
+				N- number of character to index.
+				
+				when use- when column is too long varchar(255) or TEXT
+				
+		showing indexes:
+			show index/indexes form table_name
+			or
+			show create tabel table_name;
+		fulltext indexes:
+			it use for fast text searching within large text-based columns such as char,varchar,text
+			database builds  a special index on words in text column(s)
+			common words like is, the, and are ignored.
+			return results ranked by relevence.
+			
+			creating full-text index:
+				1. during table creation:
+					create table article(
+						int id,
+						title varchar(200),
+						body text,
+						FULLTEXT (title,body)
+					)
+					
+				2. on an existing table:
+					create FULLTEXT index index_name on table_name(col_name1, col_name2);
+					
+			Quering fulltext indexes:
+				select * from articles 
+				where MATCH(title, body)AGAINST('mysql totorial')
+				
+				MATCH(title, body) → columns to search
+				AGAINST('mysql tutorial') → search string
+				Returns rows ranked by relevance automatically
+				
+			search mode:
+				1. natural language mode(default)
+					select * from articles
+					where MATCH(title, body) AGAINST('mysql totorial')
+					
+			boolean mode:
+				select * from articles 
+				where MATCH(title, body)AGAINST('+mysql -totorial' IN BOOLEAN MODE)
+				
+				+mysql	  → must include
+				-totorial → must not include
+				
+			search exact string:
+				select * from articles 
+				where MATCH(title, body)AGAINST('"mysql totorial"' IN BOOLEAN MODE )
+		-------------------	
+		EXPLAIN:
+			EXPLAIN command is used to obtain detailed information about how MySQL executes a query
+			so you can understand and optimize its performance.
+				EXPLAIN SELECT * FROM table_name WHERE condition;
+		----------
+		when indexes are ignored:
+			1. index dont work if you use % card at beginning of of a string pattern
+				Ex- index ignored: select * from users where name like '%raj'
+			2. leading columns not used in composite index
+				
+		index maintenance:
+			check index before creating new ones,
+			-redudent index:
+				(a, b) then not need to create index for a
+				but can need to create for b or b, a 
+			-dont over use index -every index slows down write
+			-monitor slow indexes using explain and adjust index accordingly
+	----------------------------
+	Securing Database:
+		1. Authentication: only authorized users can access database (use strong usernames and passwords)
+		2.Authorization / access control 
+			give each user only the permission they need
+		3. password security:
+			always hash and salt password before storing them
+	
+		#creating user:
+			in mysql user is identified by username + host(where they connect from).
+			
+		CREATE USER john@127.0.0.1
+			- create user john who can connect only from localhost(127.0.0.1)
+		CREATE USER john@codewithmosh.com
+			-create user john who can only connect from  host codewithmosh.com
+		CREATE USER john@'%.codewithmosh.com'
+			-he % acts as a wildcard.
+			 User john can connect from any subdomain of codewithmosh.com,
+			 like dev.codewithmosh.com
+		CREATE USER john - john can connect from any where(any host)
+		CREATE USER john IDENTIFIED BY 'pass@123';	
+			-create the user and set the password immediately
+		drop user:
+			DROP USER john@codewithmosh.com
+				-remove user account from database
+		change password:
+			-for currently logged in user
+				SET PASSWORD = 'newPass@123'
+			-for another user
+				ALTER USER 'john'@'%' IDENTIFIED BY 'newPass@123';
+
+			
+		granting privileges:
+			Privileges control what actions a user can perform and where.
+			-- 1: web/desktop applcation
+			CREATE USER xyz IDENTIFIED BY 'password';
+			
+			GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE
+			ON sql_store.*
+			TO xyz;
+			
+			-- 2: admin
+			GRANT ALL
+			ON *.*
+			TO john
+		viewing Privileges:
+			SHOW GRANTS FOR john;
+			
+		Revoke privileges:
+			REVOKE CREATE VIEW
+			ON 	sql_store.*
+			FROM john;
+			
+			Takes away the CREATE VIEW privilege but leaves others intact.
+	----------------------------------------
+	joins - using clause:
+		using clause used in JOIN operations when two tables have a column with the same name and you want to join using that column
+		
+		select * from product p 
+		join category c on p.category_id = c.category_id;
+		
+		if foregin key name is same in both table you can use 'using'
+		
+		select * from product p 
+		join category c using(category_id)
+	-------------------------------------
+	union :
+		combines result set of two or more select statements in a single result set.
+		
+		-each select must have same num of columns
+		-corresponding columns must have same data types
+		-column name in final result taken from first select 
+		-by default union removes duplicate rows.
+		
+		selct name from student1_2026
+		union 
+		select name from student_2025
+	-----------------------
+	creating copy of table:
+		create  table table_name as
+		select * from privious_table_name;
+		
+		insert into table_name 
+		select * from table_name where...
+	----------------------------
+	MySQL functions:
+	#Numeric functions:
+		1. round:
+			round a number to a specified number of decimal places
+			
+			ROUND(number, decimals)
+				decimal-optional
+			ex.select ROUND(21.23, 1) -- 21.2
+		2. CEIL / CEILING
+			Rounds a number up to the nearest integer, regardless of decimal part.
+			
+			SELECT CEIL(12.3);  -- 13
+			SELECT CEIL(12.9);  -- 13
+			SELECT CEIL(-12.3); -- -12  (rounds up toward positive infinity)
+		3. ABS(number)
+			Returns the absolute (positive) value
+			Ex- ABS(10)  --10
+				ABS(-10) --10
+		4. RAND()
+			returns a random decimal number between 0 (inclusive) and 1 (exclusive).
+	#String functions:
+		length
+		uppper
+		lower
+		trim ltrim rtrim
+		substring substr(string, start, length)
+		replace(string,str_to_replace, new_str)
+		cast convert(123 as char)-change datatype
+	#Date functions
+		now
+		curdate
+		curtime
+		year
+		month
+		day
+		hour
+		second
+		dayname
+		monthname
+		
+	---------------------------------------------------
+	Transactions:
+		are sequence of one or more SQL operations treated as single unit.
+		
+		transaction follow acid properties.
+		| Property          | Meaning                                                       |
+		| ----------------- | ------------------------------------------------------------- |
+		| A – Atomicity     | All operations succeed or none (all-or-nothing)               |
+		| C – Consistency   | Database remains in a consistent state after transaction      |
+		| I – Isolation     | Each transaction executes independently of others             |
+		| D – Durability    | Once committed, changes are permanent, even if system crashes |
+		
+		1. START TRANSACTION;
+			or
+			BEGIN;
+			
+		2. COMMIT;	--save all changes permanently 
+		
+		3. ROLLBACK;	--undoes all changes since transaction started
+		
+		4. SAVEPOINT; 	--make a point inside a transaction to roll back to
+			SAVEPOINT s1;
+			--rollback to this point
+			ROLLBACK TO s1;
+			
+		most databases (like MySQL) have auto-commit on so to use transaction disable auto-commit
+		SET autocommit = 0;
+		
+		-------
+		Transaction isolation levels:
+			Isolation determines how/when changes by one transaction are visible to others
+			| Level            | Description                           | Dirty Read | Non-Repeatable Read | Phantom Read |
+			| ---------------- | ------------------------------------- | ---------- | ------------------- | ------------ |
+			| READ UNCOMMITTED | Can see uncommitted changes           | ✅          | ✅                   | ✅            |
+			| READ COMMITTED   | Only committed changes                | ❌          | ✅                   | ✅            |
+			| REPEATABLE READ  | Same rows consistent in a transaction | ❌          | ❌                   | ✅            |
+			| SERIALIZABLE     | Full isolation                        | ❌          | ❌                   | ❌            |
+			
+			Dirty read:
+				dirty read happen when a transaction reads data that another transaction has modified but not commited yet
+				If the other transaction rolls back, the data you read becomes invalid.
+			Non-Repeatable Read:
+				A non-repeatable read happens when a transaction reads the same row twice, but gets different values because another transaction modified and committed it in between.
+				
+			Phantom Read:
+				A phantom read happens when a transaction reads a set of rows, and another transaction inserts or deletes rows that meet the same query condition.
+				When the first transaction reads again, it sees new “phantom” rows.
+			----
+			How set Transaction isolation Level:
+			Globally (for the entire server)
+				-SET GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+			For the current session
+				SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+			For a single transaction
+				SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+				START TRANSACTION;
+
+		-----------
+		Deadlock:
+			When two transactions each lock different rows or tables, and then try to access the other’s lock.

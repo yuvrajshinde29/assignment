@@ -1,0 +1,140 @@
+Closure Scope and scope chain
+--------------------------------
+What is Scope?
+	scope refers to the accessibility or visibility of variables, functions, and objects within different parts of code.
+	
+	Types of scopes :
+		
+		1) Global Scope
+			Variables declared outside any function or block and are globally accessible n that Module.
+			Ex-
+				const y = 2; // y is accessible anywhere in the module
+		----------------------------------------------------------------
+		2) Function (Local)Scope
+			Variables declared within a Function are only acccessible inside that function.
+			Ex-
+				Function example(){
+					var x =10; // only accessible inside this function
+				}
+		----------------------------------------------------------------
+		3) Block Scope
+			Introduced in ES6 , Variables declared with let and const are only accessible to that block (enclosed in {})in with they are defined.
+			Ex-	
+				if(true){
+					let x = 2; // only accessible in this block
+				}
+		----------------------------------------------------------------
+		
+		Bonous:
+			Lexical Scope- scope is determined at lexing (compile) time
+------------------------------------------------------------------------
+Scope Chain :
+	when variable used in js. Js engine try to find variables value in current scope if it could not found variable it will look into the outer scope and will continue to do so until it finds the variable or reaches global scope.
+	if it still could not found the variable it will throw Error.
+	----------------------------------------------------------------------
+What is a Lexical Environment?
+	A lexical environment is a structure that holds variable and function declarations and determines how variable names are resolved in nested scopes.
+
+	Structure of a Lexical Environment
+
+		A Lexical Environment has two parts:
+		Environment Record
+		Stores all the variables, functions, and parameters defined in the scope.
+		Example: { x: 10, y: 20 }
+		Outer (Parent) Reference
+		A link to the parent lexical environment (the scope in which this one was defined).
+		---------------------------------
+		Types of Lexical Environments in Node.js
+			1. Global Lexical Environment
+				-created when node js program starts
+				-variables declared outside any function or block are stored here.
+				------------------------
+			2. Function Lexical Environment
+				-created when function is invoked
+				-contains that functions variables, parameters, and inner function definations
+				--------------
+			3. Block Lexical Environment (for let and const)
+				created for each block ({}) if let and const are used inside
+		-----------------
+		Example: How Lexical Environments Work
+			let x = 10;
+			
+			function outer() {
+				let y = 20;
+			
+				function inner() {
+					let z = 30;
+					console.log(x, y, z);
+				}
+			
+				inner();
+			}
+			
+			outer();
+
+			Step-by-step explanation:
+
+				Global Lexical Environment
+				Contains: { x: 10, outer: <function> }
+				Outer reference: null
+				outer Lexical Environment
+				Created when outer() is called.
+				Contains: { y: 20, inner: <function> }
+				Outer reference: Global environment
+				inner Lexical Environment
+				Created when inner() is called.
+				Contains: { z: 30 }
+				Outer reference: outer environment
+				
+				When console.log(x, y, z) runs:
+					It looks for x in inner → not found
+					Then in outer → not found
+					Then in global → found (x = 10)
+				That’s lexical scoping — variables are resolved based on where the code is written, not where it’s called.
+====================================================================================================================
+temperal dead zone:
+	Temporal Dead Zone (TDZ) is the period between the start of a block’s scope and the point where a variable declared with let or const is initialized.
+====================================================================================================================
+Closure:
+	------------------------------------------------------------------------
+	closure is function that remembers/ retains the variables from its outer function scope even after that outer function has finished executing.
+	
+	function outer() {
+		let count = 0;
+		function inner() {
+			count++;
+			console.log(count);
+		}
+		return inner;
+	}
+	
+	const counter = outer();
+	counter(); // Output: 1
+	counter(); // Output: 2
+	-----------------------------------------------------
+	Uses of Closures:
+		Create private variables or data hiding.
+		
+		Maintain state in asynchronous callbacks or event handlers.
+		
+		Implement functional programming patterns like currying and memoization.
+	
+===================================================================================================================
+let, var and const are keywords use to declare variables.
+
+	var :
+		-function or global scope.
+		-can be redeclared , reinitialized
+		-hoiested, but initialized as undefined
+		
+	let :
+		-block scope
+		-can not redeclared
+		-can Reassigned
+		-hoiested,but in temporal dead zone (TDZ) until initialization
+		
+	const :
+		-block scope
+		-Redeclaration and Reassignment not allowed
+		-hoiested,but in temporal dead zone (TDZ) until initialization
+		

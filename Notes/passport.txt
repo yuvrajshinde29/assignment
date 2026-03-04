@@ -1,0 +1,250 @@
+passport.js
+	use:
+		login verification, sssion mangement(keep user logged in using session and cookies), outh logins, avoid writing your own risky login logic, automatically validate toke(jwt)
+
+	Common Strategies:
+Strategy           | Package                   | Use Case                              
+------------------ | ------------------------- | ------------------------------------- 
+Local Strategy	   | `passport-local`          | Login using username/email + password 
+JWT Strategy	   | `passport-jwt`            | Token-based authentication (for APIs) 
+Google OAuth	   | `passport-google-oauth20` | Login with Google                     
+GitHub OAuth	   | `passport-github2`        | Login with GitHub                     
+Facebook OAuth	   | `passport-facebook`       | Login with Facebook                   
+
+----------------------
+	steps 1:
+	npm install passport passport-local express-session
+	-------
+	step 2:
+		Setup express app
+		
+		const express = require('express')
+		const session = require('express-session')
+		const passport = require('passport')
+		
+		const app = express();
+		
+		appp.use(express.json());
+		app.use(express.urlencoded({extended:true));
+		
+		
+		app.use(session({
+			secret: 'secretkey',
+			resave:false,
+			saveUninitialized: false
+		}))
+	
+		app.use(passport.initialize())
+		app.use(passport.session())
+	-------
+	step 3:
+		configure local strategy
+		
+		import { Strategy as LocalStrategy } from "passport-local";
+		
+		passport.use(
+			new LocalStrategy({usernameField: 'email', passwordField: 'password'},(email, password, done)=>{
+				
+				//fetch user from db
+				const user = User.findOne({where:{
+								email
+							}})
+				
+				if(!user) return done(null,false,{message: 'user not found'});
+				
+				if(user.password !== password) return done(null, false, {message: 'Invalid password'})
+				
+				return done(null, user)	//----
+			})		
+		)
+		-----
+		startgey tell passport how to authenticate user.
+		
+		LocalStrategy checks username and password
+		and callback where we verify credentials. (email,password, done)
+			if valid we call done(null, user) and passport internally call req.logIn(user) or we can do it manually and store user in req.user
+			if invalid we call done(null, false, {message:''}) -req end with error or redirect depending on you
+			
+				done(error | null, object | false, object/string Optional message why auth failed)
+		-----
+	step 4:
+		serialize and deserialize
+		
+		passport.serializeUser((user, done)=>{
+			done(null,user.id)		//store user data in session
+		})
+		
+		
+		passport.deserializeUser((id, done)=>{
+			done(null, id)
+		})
+		
+		---
+		after logged in passport need to remember who is logged in.
+		serialize:  save user id in session.
+		deserialize: for every req after login passport automatically runs the deserializeUser and store returned data into req.user
+		---
+	step 5:
+		Login route
+		
+			app.post('/login', passport.authenticate('local',{
+					successRedirect : '/profile',
+					failureRedirect : '/'
+				}))
+				
+			--
+			runs your chosen startgey in this case local
+			checks the user cridentials if correct logged in else reject
+			
+			core function handle login verification automatically.
+			
+			
+	--------------------------	
+		{usernameField: 'email', passwordField: 'password'} // whaich body fields passport treat as username and passport 
+		(email, password, done) =// filds taken from req.body
+	------------------------------------------
+	custom callback to handle JSON API responses:
+	
+	app.post('/login', (req, res, next) => {
+		passport.authenticate('local', (err, user, info) => {
+			if (err) return next(err);
+			if (!user) return res.status(401).json({ message: info.message });
+			
+			//this created the session
+			req.logIn(user, (err) => {
+				if (err) return next(err);
+				res.json({ message: 'Login successful', user });
+			});
+		})(req, res, next);
+	});
+
+	----------------------
+	Protected routes:
+	
+		req.isAuthenticated()
+	
+		function isAuthenticatedUser(req,res,next){
+			if(!req.isAuthenticated()) return res.status(403).json({error: 'first login'})
+			
+			next();
+		}
+		
+	-----
+	loout:
+		app.get("/logout", (req, res) => {
+			req.logout(() => {
+				res.send("Logged out successfully");
+			});
+		});
+	
+	remove user data from session
+	end user authenticated session(clear cookie)
+		
+		-------------------------------------
+		by default passport use session to not use set it false at authentication
+		passport.authenticate('startgey name', { session: false })
+
+================================================================================================================================================================jwt startegy
+
+	  npm i express
+			passport
+			passport-jwt
+			jsonwebtoken
+				
+		
+		config/passport.js
+		
+		const passoprt = require("passport");
+		const { Strategy: JWTStartgey, ExtractJwt } = require("passport-jwt");
+		
+		//1: options to tell passport-jwt where to find token and which key to use
+		const opts = {
+			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), //looks for Bearer <token>
+			secretOrKey: process.env.JWT_SECRET,
+		};
+		
+		//2: verify callback - run whenever request hit to protected route
+		passoprt.use(
+			new JWTStartgey(opts, async (jwt_payload, done) => {
+				try {
+					//get user data from db
+					const id = jwt_payload.sub
+					const user = await User.findOne({where:{
+						id
+					}});
+				
+					if(user) return done(null,user)         //success attch user to req.user
+					else return  done(null,false,{error:'unauthorized | invalid user'}) // no user -> unauthorized
+				
+				} catch (error) {
+					console.log(error.messsage);
+					resizeBy.status(500).json({ error: error.messsage });
+				}
+			})
+		);
+		------
+		read jwt from incoming request
+		verify signature using secreat
+		decode token -> get jwt payload
+		use that data to find correct user
+		and attch correct user to req.user
+		-> route handler run with user info
+		--------------------------
+		protect routes:
+			passoprt.authenticate('jwt',{session: false);	//add this middleware
+		
+		
+		----------------
+//export passport so app can initialize
+module.exports = passoprt
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	===============	
+	Local strategy → authenticate at login
+	JWT strategy → verify token on routes
+	
+		sub
+		
+	===============	
+		
+		
+	different login methods for the same protected route.	
+		
+	app.get('/profile',passport.authenticate(['jwt', 'session'], { session: false }),(req, res) => {
+		res.json({ user: req.user });
+	});
+	
+	if jwt is valid  -> req.user is set-> continue to handler 
+	if jwt fail -> tries session.....
+		
+		
+		
+		
+		
+		
+		
+session=======
+how work with rback
+
+--------------------------------------------------------------------------------------------------
+Client (POST /login)
+        ↓
+passport.authenticate("local")
+        ↓
+LocalStrategy callback → (email, password, done)
+        ↓
+You call done(...)
+        ↓
+Passport handles result internally
+        ↓
+Success → calls next middleware (successRedirect or custom)
+Failure → calls next middleware (failureRedirect or sends 401)

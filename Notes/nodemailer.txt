@@ -1,0 +1,93 @@
+Nodemailer:
+	Simple node.js module that allows you to send emails directly from your server.(SMPT, Gmail, Outlook,etc)
+	
+	use: 
+		password reset links,
+		User sign up verification emails
+		Notifications or reports
+		
+	steps:
+		1. create transport
+		2. defined the email content  
+		3. send it 
+		-------------
+		1. Insatall nodemailer: 
+			npm i nodemailer
+			
+				// config/email.js
+				//1. create a transpoter(connect to email service)
+				const transporter = nodemailer.createTransport({
+					service: "gmail", // or use host, port and secure for custom servers
+					auth: {
+						user: process.env.USER,
+						pass: process.env.PASSOWORD, //not gmail password
+					},
+				});
+				
+				//verify connection (optional) 
+				transpoter.verify((err,success)=>{
+					if(err)return console.log('email server connection failed', err) 
+					console.log('email server ready to send message')
+				})
+				module.exports = transporter;
+				
+			// utils/sendEmail.js
+			async function sendEmail(to, subject,html,text){
+			
+				//2. define email content
+				const mailOptions = {
+					from: `"Demo Nodemailer" <${process.env.EMAIL_USER}>`,
+					to:'abc@gmail.com, xyz@gmail.com...', || arr of email strings
+					subject,
+					text,
+					html
+				};
+				
+				//3.send the email
+				const info = await transpoter.sendMail(mailOptions);
+				console.log("Email sent: ", info.messageId);
+			}
+			module.exports = sendEmail
+	--------------- 
+	Multiple receivers:
+		to send email to more than one receiver add them to the 'to' property of the mailoptions
+		
+		let mailOptions = {
+			from: 'youremail@gmail.com',
+			to: 'firstreciver@gmail.com, secondreceiver@gmail.com,...'
+			subject: '',
+			text:''
+		}
+	---------------
+	sending HTML:
+		html formated text in your email.
+		
+		let mailOptions ={
+		...
+		html:'<h1>welcome</h1><p>that was easy!</p>'
+		}
+	---------------
+	sending attachements:
+		let mailOptions ={
+		
+			...,
+			attachements :[
+				{
+					filename: "",
+					path:"/file/abc.text"
+				},
+				{
+					filename: "text.txt",
+					content: JSON.stringify({ name: "Yuvraj" })	
+				}
+			]
+		} 
+	---------------
+	If you’re using Gmail:
+		Go to Google Account → Security → 2-Step Verification → App Passwords
+		Generate an app password for “Mail” → “Other”
+		Use that 16-character password instead of your actual Gmail password.
+		------------
+	mailtrap
+	
+	Trigger mail to single person, multiple person with attachment, Table in mail body (using HTML tags), plain text

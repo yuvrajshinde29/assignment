@@ -1,0 +1,214 @@
+Git Pre Commit (Coding Convention):
+----------------------------------------------
+	A Git pre-commit hook for enforcing coding conventions is a script that runs automatically before a commit is finalized
+	ensuring your code follows certain standards (formatting, linting, naming, etc.) before being saved in the repository.
+		
+		-A linter is a tool that automatically checks your source code for errors, style issues, and potential bugs — before you even run your program
+		eslint -Enforces JavaScript/TypeScript rules and conventions
+		
+	A pre-commit hook is a script placed in the .git/hooks/ directory.
+		It runs before git commit — if it exits with a non-zero status, the commit is aborted.
+		
+		This is perfect for:
+			Enforcing coding style (e.g., PEP8, ESLint rules)
+			Checking file formatting
+			Preventing bad commit messages
+			Blocking large files or secrets
+		
+	what pre-commit hooks do:
+		-inspect code changes staged for commit.
+		-Run linters, formatters, unit tests, or other code quality checks.
+		-Abort the commit if any issue are found forcing corrections before the commit proceeds.
+		-Enforce team coding standards consistently across all contributors.
+	-------------------------------------------
+	Husky:
+		Husky is a tool that connects scripts (like ESLint) to Git hooks.
+
+		Git hooks are small scripts that run automatically before or after certain Git actions — e.g., commit, push, etc.
+	-------------------------------------------
+eslint:
+	Step 1: Add ESLint to the Project
+	------------------------------------------	
+		Step 1: Install ESLint 
+			npm install eslint --save-dev
+
+		step 2: initialize ESLint - npx eslint --init
+		
+			C:\Practice Projects\my-project>npx eslint --init
+			You can also run this command directly using 'npm init @eslint/config@latest'.
+			Need to install the following packages:
+			@eslint/create-config@1.10.0
+			Ok to proceed? (y) y
+			
+			
+			> my-project@1.0.0 npx
+			> create-config
+			
+			@eslint/create-config: v1.10.0
+			
+			√ What do you want to lint? · javascript
+			√ How would you like to use ESLint? · problems
+			√ What type of modules does your project use? · commonjs
+			√ Which framework does your project use? · none
+			√ Does your project use TypeScript? · No / Yes
+			√ Where does your code run? · browser
+			The config that you've selected requires the following dependencies:
+			
+			eslint, @eslint/js, globals
+			√ Would you like to install them now? · No / Yes
+			√ Which package manager do you want to use? · npm
+			☕️Installing...
+			
+			After setup, ESLint will:
+				Install a few dependencies automatically (like eslint-config-airbnb-base and eslint-plugin-import).
+				Create a config file, usually called .eslintrc.json.
+				--------------
+				eslint.config.mjs
+				--------------
+				import js from "@eslint/js";
+				import globals from "globals";
+				
+				export default [
+				{
+					files: ["**/*.{js,mjs,cjs}"],
+					...js.configs.recommended, // ✅ use built-in recommended config
+					languageOptions: {
+					globals: globals.browser,
+					sourceType: "commonjs",
+					},
+					rules: {
+					"no-unused-vars": "warn",
+					"no-console": "warn",
+					"semi": ["error", "always"],
+					"quotes": ["error", "single"],
+					"no-multi-spaces": "error",
+					},
+				},
+				];
+				
+			
+		step 3:Update Your package.json Scripts
+
+			Add ESLint scripts for convenience:
+				"scripts": {
+						"lint": "eslint .",
+						"lint:fix": "eslint . --fix",
+						"test": "echo \"Error: no test specified\" && exit 1"
+					}
+						
+		
+			| Command            | What It Does                                                                                         |
+			| ------------------ | ---------------------------------------------------------------------------------------------------- |
+			| `npm run lint`     | Runs ESLint on your whole project and shows any issues or warnings.                                  |
+			| `npm run lint:fix` | Runs ESLint and **automatically fixes** problems (like spacing, semicolons, etc.) whenever possible. |
+			
+	---------------------------------------------
+	step 2:  Create a Pre-Commit Hook Using Husky :
+		
+		step 1- Install Husky
+			npm install husky --save-dev
+		
+		step 2- Enable Git Hooks
+			npx husky init
+
+			This does two things automatically:
+				Creates a .husky/ folder in your project.
+				Adds a default pre-commit hook file (usually containing a placeholder script).
+				
+		step 3- Edit the Pre-Commit Hook
+		
+			add in .husky/pre-commit
+				echo "Running ESLint"
+				- npm run lint or npx eslint .
+				
+		step 4: npm run prepare
+				this will create _ folder under .husky/ if not then initialize git (git init ) and then run it
+		
+		test it :-
+		index.js
+			let a =9
+			console.log(a)
+		git init
+		git add .
+		git commit -m "test"
+		
+		or can check in bash using - npx eslint
+------------------------------------------------------------------------------------------------------------------------------
+| File Extension | Package `"type"`               | Module Type |
+| -------------- | ------------------------------ | ----------- |
+| `.js`          | `"type": "commonjs"` (default) | CommonJS    |
+| `.js`          | `"type": "module"`             | ESM         |
+| `.mjs`         | any                            | ESM         |
+| `.cjs`         | any                            | CommonJS    |
+
+
+
+Import dependencies
+const js = require('@eslint/js');
+const globals = require('globals');
+
+
+@eslint/js → Provides ESLint JavaScript recommended configurations.
+
+globals → Provides predefined global variables for different environments (browser, Node, etc).
+
+2️⃣ Export configuration
+module.exports = [ ... ];
+
+
+ESLint reads the exported array of configuration objects.
+
+Using CommonJS (module.exports) because the file is .cjs.
+
+3️⃣ Target files
+files: ['**/*.{js,mjs,cjs}'],
+
+
+The ESLint rules in this block will apply to all JavaScript files, including:
+
+.js → standard JavaScript
+
+.mjs → ES modules
+
+.cjs → CommonJS modules
+
+**/* → recursively includes all folders.
+
+4️⃣ Recommended ESLint config
+...js.configs.recommended
+
+
+Spreads the recommended ESLint rules from @eslint/js.
+
+Gives a good default set of rules for modern JS without having to write them all manually.
+
+5️⃣ Language options
+languageOptions: {
+  globals: globals.browser,
+  sourceType: 'commonjs',
+},
+
+
+globals → Defines predefined global variables that ESLint should recognize.
+
+globals.browser → Recognizes window, document, etc., as valid.
+
+sourceType: 'commonjs' → Tells ESLint that these files use CommonJS syntax (require, module.exports).
+
+Without this, ESLint might assume ES modules and throw errors on require.
+
+6️⃣ Custom rules
+rules: {
+  'no-unused-vars': 'warn',
+  'no-console': 'warn',
+  semi: ['error', 'always'],
+  quotes: ['error', 'single'],
+  'no-multi-spaces': 'error',
+},
+
+
+no-unused-vars: 'warn' 		→ Warns if variables are declared but not used.
+no-console: 'warn' 			→ Warns when console.log() is used.
+semi: ['error', 'always'] 	→ Enforces semicolons at the end of statements.
+quotes: ['error', 'single'] → Enforces single quotes for strings.
+no-multi-spaces: 'error'	→ Disallows multiple spaces (keeps code tidy).

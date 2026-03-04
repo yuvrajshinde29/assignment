@@ -1,0 +1,889 @@
+
+
+middlewares
+
+====================================================================mongoose====================================================================================
+install mongoose:
+	npm i mongoose
+	
+	aync function connectDB(){
+		try{
+			await mongoose.connect("mongodb://127.0.0.1:27017/mydb");
+			console.log("MongoDB connected)
+		}catch(){
+			console.log("DB connection failed, ",error)
+		}
+	}
+	--------------------
+	mongoDB is schema lesss but mongoose add structure to data 
+	Mongoose-level validation:
+	
+		//schema 
+		
+		const modelSchema = new mongoose.Schema({
+			name: String,
+			age:Number,
+			isActive:Boolean
+		},{
+			timestamp:true; //createdAt, updatedAt
+		})
+		
+		const model = mongoose.model("ModelName", modelSchea)
+	----------------------------------------
+	_id : unique identifier every document 
+		  automatcally created by mongodb of type ObjectId
+		  ObjectId is a 12-byte unique identifier, represented as a 24-char hex string.
+		  bjectId contains:
+				4 bytes → timestamp
+				5 bytes → random value
+				3 bytes → increment counter
+	-----
+		Mongoose Schema Types:
+			1. String:
+				name : String
+				or
+				
+				name:{
+					type: String
+				}
+			2. Number
+			3. Boolean 
+			4. Date
+			5. ObjectId	: used for references / relations
+				userId: {
+					type: mongoose.Schema.Types.ObjectId, 
+					ref : "User"
+				}
+			6.Array : array of anything
+			
+				tags : [String]
+			7. Buffer (binary data)
+				Used for file /images stored directly in DB (rare)
+			8. Mixed : accepts any thing no validation 
+				mongoos.Schema.Types.Mixed
+			9. Map (key-value pairs)
+					{
+						type: Map,
+						of :String
+					}
+			10. Decimal28 (for precise decimals, more accurate than number)
+				mongoose.Schema.Types.Decimal128
+			11. BigInt : for large numbers
+				mongoose.Schema.Types.BigInt
+	------------------------------------------------------------------------------
+	# CREATE-
+		1. create()
+			Model.create({})
+			
+		2. new + save()
+			let model= new Model({});
+			model.save();
+			
+		3. insertMany()
+			insertMany([{},{}...])
+	-----
+	# READ
+		1. find(query, projection)--all matching
+			db.users.find({ age: { $gt: 18, $lt: 30 } })
+
+
+		2. findOne(query, projection) --one matching
+			db.users.findOne(
+				{ email: "user@gmail.com" },
+				{ password: 0 } 
+			)
+				
+		3. findById('_id')
+			const user = await User.findById("691bfff3e47e9334f7d75e57");
+
+		4. findOneAndUpdate	-> return old/new doc -> update in one cammand
+			db.users.findOneAndUpdate(
+					filter,
+					update,
+					options
+				)	
+				
+				ex.
+					db.users.findOneAndUpdate(
+						{ email: "user@gmail.com" },        // filter
+						{ $set: { age: 25 } },              // update operator
+						{ returnDocument: "after" }         // return updated doc or 'before' - return before update 
+					)
+
+		5. findOneAndDelete(filter, options)
+			-delete + return Doc
+			
+			db.users.findOneAndDelete({ email: "user@gmail.com" })
+
+	----
+	options:
+		{ new : true } - return updated doc
+		{ upsert : true }- create if not exist
+	----
+	# UPDATE
+		1. updateOne(filter, update, options):
+			update first matching document
+			
+			update:
+				$set 	- set values
+				$unset 	- remove field
+				$inc 	- incremant number
+				$push 	- add to array
+				$pull 	- remove from array
+				$rename - rename field
+				$mul	- multiply number
+				$addToSet -
+				
+			await User.updateOne(
+				{ email: "userone@gmail.com" },
+				{
+					$set: {
+						password: "new password",
+					},
+				}
+			);
+			
+		2. updateMany(filter, update, options)
+		
+		3. findOneAndUpdate(filter, update, options)
+			find one and update and return Doc
+			 User.findOneAndUpdate(
+					{ name: "user one" },
+				{
+					$set: {
+						name: "user two",
+						email: "usertwo@gmail.com",
+					},
+				},
+				{
+					returnDocument: "after",
+				}
+			);
+		
+			options:
+				{new : true } - return updated doc if false(default) return old document
+				{ runValidators: true } - run schema validations during update.
+				{ sort : {age : -1}} - if multiple doc math sort first
+				
+		4. findByIdAndUpdate(_id, update, options)	
+			update one and return that doc
+			
+			await User.findByIdAndUpdate(
+				"691c0880814547675fdba506",
+				{
+					$set: {
+						name: "user ten",
+					},
+				},
+				{
+					returnDocument: "before",
+				}
+			);
+	-------------------------------------------------------------------------
+	# DELETE
+		1. deleteOne(filter, options)
+			delete 1 Doc that matches filter
+		
+			let result =await Model.deleteOne({
+								email:'abc@gmail.com'
+							})
+		
+		2. deleteMany
+		
+		3. findOneAndDelete(filter, option)
+			delete one Doc and return that document
+				
+				const user = await User.findOneAndDelete(
+					{ email: "test@gmail.com" },
+					{ returnDocument: "before" }--before default
+				);
+
+
+		4. findByIdAndDelete
+			delete using id and return doc
+			const user = await User.findByIdAndDelete("691bfff3e47e9334f7d75e57");
+
+	-------------------------------------------------------------------------
+	Extra Useful methods:
+		-countDocuments()
+		
+			await User.countDocuments(age:20)
+		-exist()
+			await User.exist({username: "name"})
+			return null or document
+		-distinct()
+			await User.distinct("age")
+	==========================================================================
+	Field level controls in Mongoose Schema
+	
+		1. type- what data type field stored
+		
+		2. required:  makes the field mandatory
+			required: true
+		
+		3. default : set default value
+			default: Date.now
+			
+		4. unique: true --makes field unique
+		
+		5. enum : allow specific values only
+			enum : ['a','b',...]
+				or
+				enum:{
+					values:['a','b',...]
+					message:"error message"
+				}
+				
+		6. min / max for numbers
+			min : 10 ,
+			max : 20
+			
+		7. minlength / maxlength
+			minlength : 10,
+			maxlength : [15,"error message"]
+		
+		8. match (Regex validtion)
+			pattern matching
+			
+			match: /^\S+@\S+\.\S+$/
+			
+		9. 	trim / lowercase / uppercase	--auto format strings
+		-----
+		10. validator (custom validator):
+		
+			fieldName: {
+						type : String,
+						validate:{
+							validator: function(value){
+								//return true if valid
+								//return false if invalid
+							}
+						},
+						message : "Custom error message"	
+					}
+		--------------
+		11. immutable : true --felds can not change after creation
+		
+		12. select - exclude field by default in find()
+			select : false 
+			
+		13. get / set --transform values at read/write time
+				
+				Setter (modify before saving)
+					setter run before saving data to db.
+					
+					set : val => val.toUpperCase()
+				--------
+				Getter (modify before returning)
+					getter is function that modifys field values when you read it.
+					
+					get : val = > val.toUpperCase()
+					
+				getter dont work when converting to JSON.
+				
+				to enable getter when converting toJSON/object
+					userSchema.set("toJSON", { getters: true });
+					userSchema.set("toObject", { getters: true });
+
+				reason  Mongoose avoids transforming raw JSON unless you manually enable
+		---------------------------------------------------------------------------------
+		Query Operators:
+			Comparision:
+			
+				$eq: 	Values are equal
+				$ne: 	Values are not equal
+				$gt: 	Value is greater than another value
+				$gte: 	Value is greater than or equal to another value
+				$lt: 	Value is less than another value
+				$lte: 	Value is less than or equal to another value
+				$in: 	Value is matched within an array
+						Ex.  subject :{
+								$in : ['java',...];
+							}
+			Logical operators:
+				$and :	return the document where all condition matches
+					const users = await  User.find({
+									$and :[
+											{ name: "abc" },
+											{ age: 20 }
+										]
+									}
+								})
+								
+					-----or-----
+					const users = await  User.find({
+									name: "abc",
+									age: 20
+								})
+						
+				$or : return the document where at least one condition matches
+					const users = await User.find({
+							$or: [
+									{ age: { $lt: 18 } },
+									{ city: "Delhi" }
+								 ]
+						});
+	
+				$nor : returns the document that does not satisfy any of the condition
+						opposite of or
+						
+						const users = await User.find({
+							$nor: [
+								{ age: { $lt: 18 } },
+								{ city: "Delhi" }
+							]
+						});
+						
+				$not : Negates the condition
+					const users = await User.find({
+							age: { $not: { $gt: 30 } }  // age ≤ 30
+						});
+
+			
+		------------------------
+		Evaluation operator:
+			$regex : pattern matching inside string
+				find({
+					name: { $regex: /^A/ }
+				})
+				---
+				| SQL `LIKE`                  | Mongoose equivalent             |
+				| --------------------------- | ------------------------------- |
+				| `LIKE '%abc%'`              | `{ field: { $regex: /abc/ } }`  |
+				| `LIKE 'abc%'` (starts with) | `{ field: { $regex: /^abc/ } }` |
+				| `LIKE '%abc'` (ends with)   | `{ field: { $regex: /abc$/ } }` |
+				| Case insensitive            | Add `i` flag → `/abc/i`         |
+				
+				{ name: { $regex: /^A.n$/ } }
+				Explanation:
+					A → literal A
+					. → any ONE character
+					n → literal n
+					^ and $ → match entire string
+					
+
+			----------
+			$text : use to search words inside text fields
+				
+				steps 1: create text index
+					userSchema.index({ name: "text", bio: "text" });
+					
+					or
+				
+					db.users.createIndex({name:'text', bio:'text'})		//set in which fields to search  //text is index type
+
+				search for word:
+					User.find({
+						$text: {
+							$search : "node backend"
+						}
+					})
+					----
+					$search : is text to find using $text
+					
+					# search exact phrase(use quotes)
+						$search : "/"name"/"
+						
+					# Negation (exclude a word)
+						$search : "developer -frontend"	
+						
+						find Document with developer but not frontend
+			--------------------------------------
+			$where:
+				
+			
+			$expr : 
+				use to caompar one field to another field
+				field -> field
+				
+				{
+					$expr : {
+							$gt : ["$age","$exprience"]
+						}
+				}	
+				return doc where age is greater than exprience.
+				
+			$jsonSchema
+
+			$mod:
+				$mod = find numbers divisible by X (or with specific remainder).
+			
+				syntax:
+				{ field: { $mod: [divisor, remainder] } }
+
+				find even numers:
+					{age: {
+							$mod : [2, 0]
+						}
+					}
+		-------------------------------------------------------------------------------------
+		Update operators:
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	------------------------------------------------------
+	Embedding:
+		putting releted information in same document.
+		fast reads
+		no join needed
+		best for small arrays
+		
+			{
+				name: "Yuvraj",
+				posts: [
+					{ title: "Hello" },
+					{ title: "World" }
+				]
+			}
+				
+	Referencing:
+		storing only the _id of another document insted of embedding the whole document.
+		
+		
+		
+		user : {
+			type: mongoose.Schema.Types.ObjectId
+			ref : 'user'
+		}
+		
+	------------------------------------------------------
+	Aggregation Pipelines:
+		series of steps(stages) that process documents on stage after another.
+		
+		normal find gets raw data but aggregate() gets processed data.
+		
+		aggregation is always an array of stages
+			Model.aggregate([
+				{stage_1},
+				{stage_2}
+				...
+			])
+
+	
+	$match	:
+		match = filter
+		it select which document enter pipeline 
+		syntax: 
+			{ $match : { field : condition }}
+			
+			[{ 
+				$match: { age: { 
+								$gt: 18 
+							 } 
+					  } 
+			},]
+
+	$lookup :
+		mongoDB join
+		used when data is referenced 
+		
+		{
+			$lookup: {
+				from: "otherCollection",			  --name of collection to join with
+				localField: "fieldInThisCollection",  --field in current collection (left side)
+				foreignField: "_id",				  --field inside joined collection (right side) 
+				as: "resultArray"					  --output array
+			}
+		}
+		------
+		db.users.aggregate([
+			{
+				$lookup: {
+				from: "posts",
+				localField: "_id",        // users._id
+				foreignField: "userId",   // posts.userId
+				as: "posts"
+				}
+			}
+		])
+			
+		lookup pipeline :
+			filter joined documents before returning.
+			
+			db.users.aggregate([
+				{
+					$lookup: {
+					from: "posts",
+					let: { userIdVar: "$_id" },          // <-- take user's _id
+					pipeline: [
+						{ $match: { $expr: { $eq: ["$userId", "$$userIdVar"] } } },  // compare post.userId to user's _id
+						 { $project: { title: 1, _id: 0 } }                  // only return title
+					],
+					as: "posts"
+					}
+				}
+			])
+				
+		----------
+		$field :refer to doument field 
+		$$var : refer to a variable(system/user)
+		---------
+	$project:
+		it can include or exclude fields
+		rename fields 
+		create new fields
+		apply expressions (arithematic,conditionl, string, array, etc)
+		
+			await User.aggregate([
+				{
+					$project: {
+						username: "$name", // rename field user to username
+						email: 1,
+						_id: 0,
+						ageInMonths: { $multiply: ["$age", 12] }, //create computed fields
+						isAdult: {
+							$cond: [
+								{
+								$gt: ["$age", 18],
+								},
+								true,
+								false,
+							],
+						}, //conditional fields
+					},
+				},
+			]);
+			
+	$addFields:
+		add new fields 
+		update existing fields 
+		cannot remove fields unlike $project
+		
+		{
+			$addFields: {
+				newField: <expression>,
+				existingField: <expression>
+			}
+		}
+		----
+		await User.aggregate([
+			{
+				$addFields: {
+					nameWithEmail: { $concat: ["$name", " ", "$email"] }, // add new field
+			
+					age: {
+						$add: ["$age", 1], //update existing field
+					},
+				},
+			},
+		]);
+	----------
+	$unwind:
+		used to deconstruct an array field from documents so that each element of the array becomes a separate document.
+		
+		Ex-
+		user collectionL:
+		{
+			"_id": 1,
+			"name": "Alice",
+			"hobbies": ["reading", "coding", "swimming"]
+		}
+		
+		->
+			const result = await User.aggregate([
+					{ $unwind: "$hobbies" }
+				]);
+			console.log(result);
+		->
+		[
+			{ "_id": 1, "name": "Alice", "hobbies": "reading" },
+			{ "_id": 1, "name": "Alice", "hobbies": "coding" },
+			{ "_id": 1, "name": "Alice", "hobbies": "swimming" }
+		]
+		
+		Options with $unwind
+		{
+			path: "$arrayField",        // The array field to unwind
+			includeArrayIndex: "idx",   // Optional: adds array index as a field
+			preserveNullAndEmptyArrays: true  // Optional: keep documents even if array is empty or missing
+		}
+	------
+	$group:
+		group documents by some fields 
+		calculate totals, counts, sums, averages, arrays etc.
+		
+		{
+			$group: {
+				_id: <expression>,   // group key or fields to group
+				field1: { <accumulator>: <expression> },
+				field2: { <accumulator>: <expression> }
+			}
+		}
+		_id : group key / field to group
+		
+		---
+		let product = await Product.aggregate([
+			{
+				$group: {
+					_id: "$category",
+					totalPrice: { $sum: "$price" },
+					arrayOfProducts: { $push: "$name" },
+				},
+			},
+		]);
+		------
+		Accumulator:
+			$sum
+			$avg
+			$min
+			$max
+			$push (collect values in array)
+			$addToSet (unique values in array)
+			$first
+			$last
+			
+	--------	
+	$sort : 
+		sort document in pipeline based on one or more fields
+		1 : ascending
+	   -1 : descesding
+		
+			{
+				$sort: {
+					name: -1,
+					price: 1,
+				},
+			},
+	----
+	$limit:
+		limit number of documents pass to the next stage
+		{
+			$limit : 1
+		}
+	$count:
+		counts how many documents passed privious pipeline stage.
+		{
+			$count : "fieldCount"
+		}
+		
+		count ends your pipeline because it outputs one document.
+		group + count gives you group count not items per group
+		if wants items per group use group+sum
+	$out:
+		takes final result of aggregation and write it into another collection
+		-if collection does not exist it creates it.
+		-if collection exist it overwrites/replaces the entire collection
+		
+		
+		
+		out must be the last stege of aggregation pipeline
+	------------------------------
+	$facet:
+		riun multiple pipeline in parallel on the same input & return result in one object
+		
+		model.aggregate([
+		
+			$facet :{
+				<label>: [pipeline],
+				<label>: [pipeline]
+			}
+			
+		])
+		
+		--
+		User.aggregate([
+			{
+				$facet: {
+				docs: [
+						{ $sort: { createdAt: -1 } },
+						{ $skip: 0 },
+						{ $limit: 10 }
+					],
+					totalCount: 
+					[
+						{ $count: "count" }
+					]
+				}
+			}
+		])
+
+		
+	----------------------------------------------------------------------------------------------------------------------------------------------------------
+	$cond: {
+		if : <condition>,
+		then: <value when true>,
+		else : <value when false>
+	}
+			or shorthand
+			
+			$cond : [
+				{ $gt : ["$age" , 18]},
+				true,
+				false
+			]
+			
+================================================================================================================================================================
+populate:
+	use ref option to identify referenced document.
+	
+	Ex : postedBy : {
+			type : Schema.Types.ObjectId,
+			ref : "user"
+		}
+		
+		call:
+			db.post.find().populate("postedBy")
+		
+		
+		
+		populate(), sort(), limit(), skip(), and select():
+		
+		const posts = await Post.find({ title: /tutorial/i })   // filter
+			.populate('author', 'name email')                   // populate 'author', select only name & email
+			.sort({ createdAt: -1 })                            // newest posts first
+			.skip(5)                                            // skip first 5 documents (pagination)
+			.limit(10)                                          // return only 10 documents
+			.select('title content author createdAt');          // only select these fields from Post
+			
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			
+			
+			
+
+  
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

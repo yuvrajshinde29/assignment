@@ -1,0 +1,100 @@
+JWT json web token:
+	jwt is a compact, secure way to transmit nformation between two parties.
+	client and server 
+	commenly used for authentication and authorization in web app
+	it is secure because of it is digitally signed. JWT can signed using a secreat.
+	
+	Structure of jwt:
+		jwt consist of three parts seperated by ( . ) 
+		1. header
+		2. payload 
+		3. signature
+		
+		xxxxx.yyyyy.zzzzz
+		
+		Header:
+			header consist:
+				- type of token 
+				- signing algorithm
+				
+				{
+					"algo" : "HS256",
+					"typ"  : "JWT",
+				}
+				
+		Payload:
+			contains the data(claims) you want to store
+			{
+				"id": 1,
+				"email": "user@example.com",
+				"role": "admin"
+			}
+			
+		Signature:
+			encoded header, encoded payload, a secreat, algorithm specified in header and sign that.
+			
+			enasure that token hasn't been tempered with 
+			
+		Ex.
+			eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+			eyJpZCI6MSwiZW1haWwiOiJ1c2VyQGVtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiJ9.
+			4f6Fz9VtC5j2bZ8yHtBKyFzV9MT_4d6oD7r0OQ6O2-Y
+			
+	How JWT Works (in authentication)
+		Login → User sends credentials (email/password).
+		Server validates → If correct, server signs a JWT using a secret key and returns it.
+		Client stores JWT (usually in localStorage or an HTTP-only cookie).
+		Subsequent requests → Client sends the JWT in the Authorization header:
+		Authorization: Bearer <token>
+		Server verifies the signature → If valid, it trusts the user and grants access.
+		
+		Verification- Checking that the JWT’s **signature** is valid — i.e., it was signed by your server using your secret/private key.          |
+		Validation-   Ensuring the **claims** (like `exp`, `iat`, `iss`, etc.) are still valid — e.g., token not expired, user role allowed, etc. |
+	---------------------------------------
+	jwt validate middleware:
+	
+	const jwt = require('jsonwebtoken')
+	const secretKey = 'secretKey'
+	
+	function authenticateToken(req, res, next){
+		const authHeader = req.headers['authorization']
+		const token = authHeader && authHeader.split(' ')[1]	// or token = req.cookies.token; read from cookie
+		
+		if(!token) returns res.status(401).json({message: 'token required');
+		
+		jwt.verify(token, secretKey, (err, decoded)=>{
+			if(err) return res.status(403).json({message: 'Invalid or Expired token'})
+			
+			req.user = decoded;
+			next();
+		});
+	}
+	------------------------------------
+	app.post('/login', (req, res)=>{
+		const user = {id : 1, email: 'user@gmail.com'}
+		const token = jwt.sign(user, secretKey, {expiresIn: '1h'})
+		
+		res.cookie('token',token,{
+			httpOnly: true,    // JavaScript can't access it
+			secure: true,      // Only sent over HTTPS
+			sameSite: 'strict' // Protects from CSRF
+		})
+		
+		or
+		res.header('Authorization', 'Bearer ' + token)
+		or
+		res.setHeader('x-auth-token', token);	
+			
+		res.json({message: 'login successfull'})
+	})
+	------------------------------------
+	Encoding:
+		creating the token
+		json string
+		
+	Decoding:
+		verify the signature to ensure that token wasnt expired or tempered
+		decode payload into normal java script object so server can access it.
+		
+====================================================
+at time of using mongo create method on user model for creating token link: https://members.codewithmosh.com/courses/293204/lectures/4510489

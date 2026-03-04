@@ -1,0 +1,70 @@
+multer:
+	multer is node.js middleware used for handling file uploads
+	
+	what multer does:
+		-Parses multipart/form-data requests
+		-store uploaded files either in memory or on disc
+		-make uploaded files available via req.file or req.files
+		
+		we store file in local directory  and file path in db.
+		
+	----------------------------
+	
+	steps to work with multer:
+	
+	step-1: npm i multer
+	
+	step-2: //configure storage
+			const multer = require("multer");
+
+			const storage = multer.diskStorage({//storage is storage engine object that tell multer where and how store incoming files
+				destination: (req, file, cb) => {
+					cb(null, "./uploads"); //folder to store file
+				},
+				filename: (req, file, cb) => {
+					cb(null, Date.now() + "-" + file.originalname); //rename file so name will unique
+				},
+			});
+			
+			// Use memory storage instead of disk
+			// const storage = multer.memoryStorage();
+			//now you can access file in route req.file and actual file bytes are stored in req.file.buffer
+			
+			const upload = multer({storage})    //return a multer object we use as middleware tipically calling methods on it  
+			
+			// you can use:
+			// upload.single('fieldName') → upload one file
+			// upload.array('fieldName', count) → multiple files
+			// upload.fields([...]) → different fields
+			
+			module.exports = upload;
+			
+			
+	step-3:
+			app.post("/", upload.single("fileName"), (req,res) => {
+				//fileNmae - must be same as input field name of UI form
+				console.log('=',req.file); //file info
+				res.json(req.file)
+			});
+			
+			/*output = {
+			fieldname: 'fileName',
+			originalname: 'wallpaperflare.com_wallpaper.jpg',
+			encoding: '7bit',
+			mimetype: 'image/jpeg',
+			destination: './uploads',
+			filename: '1761740203629-wallpaperflare.com_wallpaper.jpg',
+			path: 'uploads\\1761740203629-wallpaperflare.com_wallpaper.jpg',
+			size: 309586
+			} */
+			
+//==============================
+filter file uploads:
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+}
+const upload = multer({ storage: storage, fileFilter: fileFilter });

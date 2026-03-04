@@ -1,0 +1,181 @@
+c8ASgPOkBsIFdzl4
+=====
+MongoDB :
+Mongod - engine
+Mongodb compass
+Mongosh- cmd shell
+
+Database- collections- documents
+—--------------------------------------------------------
+MongoDB is a NoSQL database
+Store data in documents(similar to JSON objects)
+
+Each object is called Document.
+Documents are grouped into CollectionsCollections are stored in database.
+
+Hierarchy
+	MongoDB Server
+ 	└── Database (e.g. myAppDB)
+      		└── Collection (table)
+        		   	└── Documents ( row)
+				 └── Fields (key–value pairs)
+Why mongo:
+	Schema less : no fixed structure. You can have flexible fields in each documents.
+JSON like storage:
+	Easy to work with Node.js and JavaScript 
+Scalable: 
+	Built for large data and distributed systems.
+Fast read writes:
+	Optimized for performance using BJSON format(binary JSON)
+	
+	BSON: data in binary format,
+		Machine readable,
+		Support more datat ypes than json,
+		Fast parsing and encoding
+	Limitations of BSON: 16 MB document size limit,
+				Binary, not human-readable,
+				Slightly larger than json because BSON stores extra metadata for each field	
+
+Basic Commands (in Mongo Shell or Compass):
+Command
+Meaning
+show dbs :									List all databases
+use myDatabase :							Switch or create a database
+show collections :							List collections inside the DB
+db.createCollection("users") :				Create a collection
+db.users.insertOne({ name: "Yuvraj" }) :	Insert a document
+db.users.find() :							Retrieve all documents
+
+Document support: 
+
+String: “hello”
+Numbers:29
+Booleans: true/false
+Arrays: [‘node’, ’mongo’]]
+Objects: {address:{city : ‘pune’}}
+Dates: ISODate("2025-11-07T00:00:00Z")
+ObjectId:  unique _id automatically created for each document
+{
+  "_id": ObjectId("6738abf5e6a..."),
+  "name": "Yuvraj",
+  "age": 22,
+  "skills": ["Node.js", "MongoDB"],
+  "address": {
+    "city": "Pune",
+    "zip": 411001
+  }
+}
+
+
+-every document must have a unique  _id field mongoDB create it automatically using ObjectId()
+-documents can have different fields in the same collection.
+Its called schema flexibility
+{ “name” : “abc”, “age”: 20},
+{ “name” : “abc”, “email” : “user@1223”, “password”: “pass@123”}
+
+------
+	db - refers to current database
+		built in variable provided by mongoDB shell
+	
+	1. create collection mongosh
+		method 1:
+			db.createCollection('collectionName')
+			
+		method 2: During insertion period
+			let object = {
+							"name":"user",
+							"email":"user@gmail.com"
+						 }
+			db.User.insertOne(object)
+		Note: In MongoDB, a collection is not actually created until it gets content!
+		
+	---------------
+	2. insert documents
+		
+		I) inserOne()		
+			db.collection_name.insertOne(object)
+		II) insert many documents
+			db.collection_name.inserMany(array of objects/documents)
+	
+		16 MB per document.
+	--------------
+	3. find data: to select data from collection
+			
+			db.collection.find(query, projection)
+				this method accepts query object if left empty return all documents
+				
+				db.collection_name.find();
+				
+			db.collection.findOne(query, projection): 
+				return fisrt matched document
+				b.collection_name.findOne();	
+				
+			Parameters: query and projection
+			
+				I) query :
+					filter like where      	 				
+				----------
+				II) Projection:
+					controls which fields to include in result.
+					if omitted returns all fields 
+					
+					{ fieldName: 1 } // include field
+					{ fieldName: 0 } // exclude field
+					
+					You can’t mix inclusion and exclusion in the same projection (except _id).
+					db.users.find({}, { name: 1, password: 0 })	//--error
+					--
+				pretty print (format output)
+					db.user.find().pretty()
+		---------
+		update document:
+			updateOne(filter,update) or updateMany()
+			
+				update one : updates first matching document.
+					db.users.updateOne(
+						{ name: "abc" },
+						 { $set: { age: 22, city: "Goa" } },
+					)
+					
+			updateMany(): update all matching documents
+					db.users.updateMany(
+						{ name: "abc" },
+						{ $set: { age: 26 } }
+					)
+					output:
+						{
+							acknowledged: true,
+							insertedId: null,
+							matchedCount: 1,
+							modifiedCount: 1,
+							upsertedCount: 0
+						}
+						
+			replaceOne(): Replaces entire existing document (not partial update)
+				replaceOne(filter, replacementDocument)
+				
+			upsert option update if matching document found else create new one
+				db.users.updateOne(
+					{ name: "David" },
+					{ $set: { age: 22, city: "Goa" } },
+					{ upsert: true }  	//----
+				)
+		-----------
+		update in arrays
+		-----------
+		Delete Document:
+			deleteOne() or deleteMany()
+			
+			deleteOne() : delete first document that matches the filter.
+				db.users.deleteOne({ city: "Pune" })
+			
+			deleteMany(): delete all matching documents
+				db.users.deleteMany({ city: "Pune" })
+			
+			findOneAndDelete(): delete first matching document and returns document
+		
+			db.collection_name.drop(): Deletes the collection and all its indexes.
+
+
+	
+	

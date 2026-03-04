@@ -1,0 +1,406 @@
+Primitive Data Types:
+	-String: Represent textual data.
+		Methods:
+			length (property)
+			----------------------------------------------------------------------------------------------
+			toUpperCase()
+			----------------------------------------------------------------------------------------------
+			toLowerCase()
+			----------------------------------------------------------------------------------------------
+			indexOf()
+			----------------------------------------------------------------------------------------------
+			slice():
+				extracts the text from one string and returns a new string.
+				
+					- slice(indexStart)
+					- slice(indexStart, indexEnd)
+					
+					indexStart- first char to include.
+					indexEnd (Optional) - exclesive
+					support -ve indexing
+			----------------------------------------------------------------------------------------------
+			subString():
+				 returns the part of this string from the start index up to and excluding the end index, or to the end of the string if no end index is supplied.
+			----------------------------------------------------------------------------------------------
+			replace():
+				replace(pattern, replacement)
+				returns new string with replacing the maches/ or matching pattern
+			----------------------------------------------------------------------------------------------
+			trim()
+				Returns a new string with no leading or trailing whitespace.
+			----------------------------------------------------------------------------------------------
+			split():
+				divide a string into order list of substrings, place these substrings into an array and return array
+				split(separator)
+				split(separator, limit)
+			----------------------------------------------------------------------------------------------
+			startWith():
+				str.startsWith(searchString, position)
+					-searchString (required): The substring to search for at the start of the string.
+					-position (optional): The position in the string at which to begin the search (default is 0).
+					-The method is case-sensitive.
+					-Returns a boolean: true
+				Ex-	
+					const str = "Hello world, welcome to the universe.";
+
+					console.log(str.startsWith("Hello"));   // true
+					console.log(str.startsWith("world"));   // false
+					console.log(str.startsWith("world", 6)); // true, because "world" starts at index 6
+					console.log(str.startsWith("hello"));   // false (case-sensitive)
+			----------------------------------------------------------------------------------------------
+			endWith():
+				-The endsWith() method in JavaScript checks if a string ends with a specified substring and returns true if it does, otherwise false.
+					str.endsWith(searchString, endPosition)
+
+	----------------------------------------------------------------------------------------------
+	-Number:Represent Both integer and floating-point numbers.
+		toString()
+		----------------------------------------------------------------------------------------------
+		isNaN():
+			to determine the value is (not a number)
+			returns true if value is NaN
+	----------------------------------------------------------------------------------------------
+	-Boolean: Represent logical entities true or false
+		methodes:
+			toString()
+	----------------------------------------------------------------------------------------------
+	-Undefined:Represent a variable that has been declared but not assigned a value
+	----------------------------------------------------------------------------------------------
+	-Null: Represent a absence of any object value
+	----------------------------------------------------------------------------------------------
+	-Symbol: Introduced in ES6 represent a unique identifier.
+	----------------------------------------------------------------------------------------------
+	-BigInt: Introduced in ES2020 represent whole numbers larger than 2^56 - 1
+-----------------------------------------------------------------
+Non- Premitive (Reference) Daya Types:
+	----------------------------------------------------------------------------------------------
+	-object:The base for all non-primitive data types. Represents a collection of key-value pairs.
+		
+		Methods: 
+			keys()
+				-returns array of strings represnting the objects own property key.
+				
+					const user = {
+					name: "Alice",
+					age: 30,
+					role: "admin"
+					};
+					
+					console.log(Object.keys(user)); // ["name", "age", "role"]
+					
+			----------------------------------------------------------------------------------------------
+			values():
+				returns array of values
+					const person = {
+					firstName: "John",
+					lastName: "Doe",
+					age: 30
+					};
+					
+					console.log(Object.values(person)); 
+					// Output: ["John", "Doe", 30]
+					
+			----------------------------------------------------------------------------------------------
+			entities()
+				It returns an array where each element is a two-item array: [key, value]
+				
+					const obj = { name: "Alice", age: 25, city: "New York" };
+					const entries = Object.entries(obj);
+					
+					console.log(entries);
+					// Output: [ ["name", "Alice"], ["age", 25], ["city", "New York"] ]
+					
+					// Iterating over key-value pairs
+					entries.forEach(([key, value]) => {
+					console.log(`${key}: ${value}`);
+					});
+					// Output:
+					// name: Alice
+					// age: 25
+					// city: New York
+					
+			----------------------------------------------------------------------------------------------
+			toString()
+			----------------------------------------------------------------------------------------------
+	-Array:
+		use tostore ordered collections of values
+		
+		Methods:
+			length (property)
+			----------------------------------------------------------------------------------------------
+			push():
+				add  one or more element to the end of array.
+				it modifies the original array and return new length of array.
+				
+				array.push(element1, element2, ..., elementN)
+
+					let fruits = ["Banana", "Orange", "Apple"];
+					
+					let newLength = fruits.push("Mango");
+					console.log(fruits);      // ["Banana", "Orange", "Apple", "Mango"]
+					console.log(newLength);   // 4
+					
+					fruits.push("Pineapple", "Grapes");
+					console.log(fruits);      // ["Banana", "Orange", "Apple", "Mango", "Pineapple", "Grapes"]
+					console.log(fruits.length); // 6
+					
+				
+			----------------------------------------------------------------------------------------------
+			pop():
+				It removes and returns the last element of the array.
+				It changes the original array.
+				If the array is empty, it returns undefined.
+				It takes no arguments.
+				Commonly used to implement stack behavior (LIFO - Last In, First Out)
+				
+					let fruits = ["Banana", "Orange", "Apple", "Mango"];
+					
+					let lastFruit = fruits.pop();
+					
+					console.log(lastFruit);  // Output: Mango
+					console.log(fruits);     // Output: ["Banana", "Orange", "Apple"]
+					
+			----------------------------------------------------------------------------------------------
+			shift():
+			
+				Removes and returns the first element of the array.
+				Modifies the original array and reduces its length by one.			
+				If called on an empty array, it returns undefined.			
+				Shifts all subsequent elements to lower indexes (index 1 becomes index 0, index 2 becomes 1, etc.).
+				
+					const fruits = ["Banana", "Orange", "Apple", "Mango"];
+					const firstFruit = fruits.shift();
+					
+					console.log(firstFruit);  // Output: "Banana"
+					console.log(fruits);      // Output: ["Orange", "Apple", "Mango"]
+					
+			----------------------------------------------------------------------------------------------
+			unshift():
+				The unshift() method in JavaScript adds one or more elements to the beginning of an array and returns the new length of the array
+				
+					let fruits = ["Apple", "Banana"];
+					let newLength = fruits.unshift("Strawberry", "Orange");
+					
+					console.log(fruits);    // ["Strawberry", "Orange", "Apple", "Banana"]
+					console.log(newLength); // 4
+
+			----------------------------------------------------------------------------------------------
+			splice():
+				method that can add, remove, or replace elements within an array, modifying the original array directly
+				
+					array.splice(start, deleteCount,item1, item2, ...itemN);
+					
+					Removing Elements:
+						let arr = ["Apple", "Banana", "Cherry", "Date"];
+						let removed = arr.splice(1, 2); // removes 2 elements starting from index 1
+						
+						console.log(arr);     // ["Apple", "Date"]
+						console.log(removed); // ["Banana", "Cherry"]
+						
+					-------------------------------------------
+					Adding Elements:
+						let arr = ["Apple", "Banana", "Date"];
+						arr.splice(2, 0, "Cherry", "Mango"); // add without removing
+						
+						console.log(arr); // ["Apple", "Banana", "Cherry", "Mango", "Date"]
+					-------------------------------------------
+					Replacing Elemenys:
+						let arr = ["Apple", "Banana", "Cherry", "Date"];
+						arr.splice(1, 2, "Kiwi", "Peach"); // remove 2 elements at index 1, add 2 new elements
+						
+						console.log(arr); // ["Apple", "Kiwi", "Peach", "Date"]
+					-------------------------------------------
+					-Negative start counts from the end (e.g., -1 is last element).
+					-
+						
+			----------------------------------------------------------------------------------------------
+			slice():
+				The slice() method in JavaScript returns a shallow copy of a portion of an array into a new array, selected from a start index up to but not including an end index. It does not modify the original array.
+				
+					array.slice(start, end)
+
+				start (optional): Zero-based index at which to begin extraction. Defaults to 0. Can be negative to count from the end.
+
+				end (optional): Zero-based index before which to end extraction (not included). Defaults to array length. Can be negative.
+				
+				Ex-
+				const fruits = ['apple', 'banana', 'cherry', 'date', 'elderberry'];
+				
+				console.log(fruits.slice());		//[ 'apple', 'banana', 'cherry', 'date', 'elderberry' ]
+				console.log(fruits.slice(1, 3)); 	//['banana', 'cherry']
+				console.log(fruits.slice(2));		//['cherry', 'date', 'elderberry']
+				console.log(fruits.slice(-3, -1));	//['cherry', 'date']
+			----------------------------------------------------------------------------------------------
+			concat():
+				used to merge two or more arrays. and return new array containing merged array
+				does not modify original arrays
+				
+					array1.concat(array2, array3, ..., arrayN)
+					
+				Ex-
+				let arr1 = [1,2,3];
+				let arr2 =[3,4];
+				let arr3 =[5,6];
+				let arr4 = arr1.concat(arr2,arr3,7,8,9,10) // concating one or more arrry also adding elements
+				
+				console.log(arr4);	//[ 1, 2, 3, 3, 4, 5, 6, 7, 8, 9, 10]
+				
+			----------------------------------------------------------------------------------------------
+			join():
+				The join() method in JavaScript is used to combine all elements of an array into a single string, separated by a specified separator string. It returns this string and does not modify the original array.
+				
+					array.join(separator)
+
+				-Treats undefined, null, and empty slots like empty strings when joining.
+				
+				Ex-	
+					let arr1 = [1,2,3];
+					let str = arr1.join("-");
+					console.log(str);	//"1-2-3"
+					
+			----------------------------------------------------------------------------------------------
+			map():
+				create new array by performing some operation on array elements;
+				
+					array.map((currentVal, index, arr));
+			----------------------------------------------------------------------------------------------
+			filter():
+				creates a new array containing elements that satisfy a specified condition.
+				
+					Ex-
+					let arr = [1,2,3,4,5].filter((val, index, arr)=> val % 2 === 0);
+					console.log(arr); 	//[2,4]
+			----------------------------------------------------------------------------------------------
+			reduce():
+				method in JavaScript applies a reducer function on each element of an array to reduce it to a single output value
+				
+				array.reduce((resut, val,index, arr),initialVal)
+				
+				Ex-
+					let sum =[1,2,3,4,5].reduce((sum, val, index, arr)=> sum + val, 0);
+					console.log(sum);		//15
+			----------------------------------------------------------------------------------------------
+			forEach():
+				commonly use for iterating over array
+				
+					array.forEach((val, index, arr));
+					
+				Ex-	
+					[1,2,3,4,5].forEach((val, index, arr)=>console.log(val));	
+			----------------------------------------------------------------------------------------------
+			indexOf():
+				return first index at which given element found in an array, or -1 if element is not present in array.
+				
+					array.indexOf(searchElement, fromIndex)
+
+					-Returns the first index where the element is found.
+					-Returns -1 if the element is not found.
+					-Uses strict equality (===) for comparisons.
+					
+					let arr = [1,2,3,4,5];
+					console.log(arr.indexOf(4));	//3
+			----------------------------------------------------------------------------------------------
+			includes():
+				checks if array contains specified element returns true else false
+				Performs a strict equality check (===) except treats NaN as equal to NaN.
+				
+					array.includes(valueToFind, fromIndex)
+				Ex-
+					let arr = [1,2,3,4,5];
+					console.log(arr.includes(4));	//true
+									
+	----------------------------------------------------------------------------------------------		
+	-Function :
+		block of code use to perform a task or repeated task
+		Functions are first class objects in javaScript
+		
+			call():
+					functionName.call(thisArg, arg1, arg2, ..., argN)
+
+				-use to explicitly set the value of this inside a function.
+				-call the function immediately
+				-arguments are passed individually, seperated by commas.
+				
+				Ex-
+					let person1 ={
+						name : "raj",
+						greet : function (greetings){
+							console.log(`${greetings} ${this.name}`);
+						}
+					}
+					
+					let person2 = {
+						name :"virat"
+					}
+					// Call greet of person1 but with person2 as `this`
+					person1.greet.call(person2, "good morning");	//good morning virat
+					
+					------
+				-It enables you to call a function that belongs to one object with another object as its this value.
+				-Useful for setting the context (this) explicitly when calling a function.
+				-Allows passing arguments one by one after the this argument.
+			----------------------------------------------------------------------------------------------
+			apply():
+				
+				The apply() method in JavaScript calls a function with a specified this value and arguments provided as an array (or an array-like object).
+				
+					func.apply(thisArg, argsArray)
+
+					Ex-
+						------
+						const person = {
+						firstName: "Taylor",
+						lastName: "Jackson"
+						};
+						
+						function greet(wish, message) {
+						return `${this.firstName}, ${wish}. ${message}`;
+						}
+						
+						const result = greet.apply(person, ["Good morning", "How are you?"]);
+						console.log(result); 
+						// Output: Taylor, Good morning. How are you?
+						----
+			
+				-Calls the function immediately.
+				-Takes the this value as the first argument.
+				-Arguments are passed as a single array.
+			----------------------------------------------------------------------------------------------
+			bind():				
+				Returns a new function with bound this and optionally preset initial arguments.
+				Does not call the function immediately.
+				Arguments can be provided when calling this new function.
+				
+				func.bind(thisArg[, arg1[, arg2[, ...]]])
+	
+				Ex-
+					let person1 ={
+						name:"rohit",
+						greet: function(greetings, message){
+							console.log(`${this.name} : ${greetings} . ${message}`);
+						}
+					}
+					
+					let person2={
+						name:"virat"
+					}
+					
+					let newFun =person1.greet.bind(person2,"good morning", "how are you?");
+					newFun();
+					---or---
+					
+					let person1 ={
+						name:"rohit",
+						greet: function(greetings, message){
+							console.log(`${this.name} : ${greetings} . ${message}`);
+						}
+					}
+					
+					let person2={
+						name:"virat"
+					}
+					
+					let newFun =person1.greet.bind(person2);
+					newFun("good morning", "how are you?");
+					
+	----------------------------------------------------------------------------------------------

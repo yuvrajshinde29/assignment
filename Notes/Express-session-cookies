@@ -1,0 +1,115 @@
+express-session
+	is a middleware use for store user session data on server side.
+	session id is stored in cookie.
+	
+	1.installation
+		npm i express-session
+		
+	2. create session middleware 
+		const session = require('express-session');
+		
+		app.use(session({options))
+	
+		options:
+			secret: '', 				//used to sign the session id cookie 
+			resave: false, 				//dont save session if not modified.
+			saveUninitialized: false,	//don't save empty sessions
+			cookie:{
+							
+			}							//control cookie behavior 
+			store :				//define where session data are stored (in-memory,Redis,MongoDB)
+									by default in memory 
+	3. set session value 
+	
+		req.session.user = { id: 1}
+		
+	4. get session value
+		
+		req.session.user
+		
+	5. destroy session 
+	
+		req.session.destroy((err)=>{
+			if(err) return res.status(500).send('Error destroying session');
+			
+			res.clearCookie('connect.sid'); //optional but recommended.
+			
+			res.send("session destroyed. Logged out successfully")
+		})
+	-------------------------------------------------------------------------------------------------
+	session options:
+	cookie:	{ 	path: '/', 
+				httpOnly: true, 
+				secure: false, 
+				maxAge: null 
+			}
+			--these are default options
+			
+		-maxAge : 	number - default null	--time (in ms) until the cookie expires
+					Ex- 1000 * 60 * 60 = 1hr
+					
+		-expires : 
+		
+		-secure : boolean - default false	--if true cookie is only sent only over https
+		
+		-httpOnly : default true : protects from XSS attacks 
+						if false the cookie is visibe to client side javascript 
+						any one can read it with console.log(document.cookie)
+						
+						XSS (cross site scripting) is a type of security vulnerability
+		-path : default '/'  -- restricts cookies to a specific route path
+		
+		-sameSite  	--Controls cross-site sending (strict, lax, none)
+	-----------------------------------------------------------------------------------------
+	req.session
+		To store or access session data
+		
+	Session.regenerate(callback): 
+		create a brand-new session for the user — with a new session ID — while preserving or reassigning any necessary data
+		
+		req.session.regenerate(err => {
+			if (err) throw err;
+			
+			req.session.user = { id: 1, name: 'Yuvraj' };
+			res.send('Login successful');
+		});
+		
+	Session.reload(callback):
+		reload session data from store in case it has been updated
+		
+		req.session.reload(function (err) {
+			if (err) throw err;
+			// Session data is now reloaded
+			console.log(req.session);
+		});
+	Session.save(callback):
+		normally express-session automatically saves the session at end of the request (when the response is about to send)
+		but some time you want to force to save like before redirecting...
+		
+	req.session.id
+	req.session.cookie
+================================================================================================================================================================
+	Cookies:
+		small piece of data that server sends to client
+		client(Browser) store them  and automatically sends with every request to same domain'
+		
+		steps to work with cookie	
+		
+		1. install cookie-parser
+		
+		2. set middleware
+			app.use(cookieParser());
+			
+		3. set cookies
+			
+			res.cookie('key':'value',{
+				maxAge:1000*60,
+				httpOnly:true,
+			})
+			
+		4. get cookies
+			req.cookies
+			
+		5. res.clearCookie('key')
+		
+		

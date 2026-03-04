@@ -1,0 +1,138 @@
+js Functions 
+	reusable blocks of code designed to perform specific tasks
+	takes an input and return an output 
+Type of Functions:
+	
+	Named:
+		A function that has its own name when declared. It’s easy to reuse and debug because the name shows up in error messages or stack traces.
+		function oddOrEven(num){
+			if(num % 2 == 0) {
+				return "even number"
+			}else{
+				return "odd number"
+			}
+		}
+	----------------------------------------------------------
+	arrow:
+		short cut to write function.
+		if single line operation we can omit return and {}
+		()=>{}
+	----------------------------------------------------------
+	IIFE:
+		-function that runs immediately after it is defined — without needing to be called separately.
+		const result = (function () {
+			console.log("This runs immediately!");
+		})();	
+		
+		//here value of result i promise.
+	----------------------------------------------------------
+	pure:
+		Pure functions return the same output for the same inputs and do not produce side effects. They do not modify state outside their scope, such as modifying global variables, changing the state of objects passed as arguments, or performing I/O operations.
+		-easy to debug,predictable behavior 
+	----------------------------------------------------------		
+	impure:
+		-Impure functions are functions that can modify the state of the application or have side effects.
+		-impure functions can have unpredictable behavior and do affect other parts of the application.
+	----------------------------------------------------------
+	callback:
+		A callback function is passed as an argument to another function and is executed after the completion of that function.
+	----------------------------------------------------------
+	higher order:
+		A function that either takes another function as a parameter or returns another function. These are common in JavaScript (e.g., map, filter, reduce).
+	----------------------------------------------------------
+	first class;
+		A programming language is said to have First-class functions when functions in that language are treated like any other variable. 
+		For example, in such a language, a function can be passed as an argument to other functions, can be returned by another function and can be assigned as a value to a variable
+	----------------------------------------------------------
+	function expression:
+		function that we assign to a variable and then used by calling that variable
+		const add = function(a, b) {
+			return a + b;
+		};
+		console.log(add(2, 3)); // 5
+	----------------------------------------------------------
+	recursion:
+		function that call itself until a condition is met.
+			function factorial(n){
+					if(n===1 || n===0){
+						return 1;
+					}
+					return n * factorial(n-1);
+			}
+	----------------------------------------------------------
+	generator:
+		functions can pause execution using yield and resume later.
+		Declared with an asterisk *
+		it allow us take control of the execution flow and generate multiple values.
+		
+		-yield keyword to pause esxecution 	and generate value
+		- when the value is yield state of function is saved and resumed later calling next()
+		
+			function* generatorFunction(){
+					console.log("first yield")
+				yield 4;
+					console.log("second yield")
+				yield 2;
+			}
+			const g =generatorFunction();	// Returns generator object
+
+			console.log(g.next());
+			console.log(g.next());
+			
+			output:
+				first yield
+				{ value: 4, done: false }
+				
+				second yield
+				{ value: 2, done: false }
+				
+	----------------------------------------------------------
+	Anonymous :
+		function that dont have name.
+		it usually assined to variable and used as callback.
+		const great = function(){
+			return "hey there"
+		}
+	----------------------------------------------------------
+	Constructor Function
+		A special type of function used to create multiple objects with the same structure. It’s called with the new keyword.
+		
+			function Person(name, age) {
+			this.name = name;
+			this.age = age;
+			}
+​			
+			const user = new Person("abc", 22);
+			console.log(user.name); // abc
+	----------------------------------------------------------
+	Async Function
+		Functions that handle asynchronous tasks. Declared with async, they return a Promise, and you can use await inside them to pause until another Promise resolves.
+			async function fetchData() {
+				return "Data fetched!";
+			}
+			fetchData().then(console.log); // Data fetched!
+	----------------------------------------------------------
+	Nested Functions:
+		Functions defined within other functions are called nested functions. They have access to the variables of their parent function.
+	----------------------------------------------------------
+	Factory Functions:
+		A factory function is simply a function that returns an object
+			-It’s an alternative to using classes or constructor functions.
+			
+			function createUser(name, age) {
+				return {
+					name,
+					age,
+					greet() {
+					console.log(`Hello, my name is ${this.name} and I'm ${this.age} years old.`);
+					},
+				};
+			}
+				
+			// Using the factory
+			const user1 = createUser("Yuvraj", 22);
+			const user2 = createUser("Shivam", 25);
+			
+			user1.greet(); // Hello, my name is Yuvraj and I'm 22 years old.
+			user2.greet(); // Hello, my name is Shivam and I'm 25 years old.
+	----------------------------------------------------------

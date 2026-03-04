@@ -1,0 +1,64 @@
+corn jobs:
+	schedular or cron job in node js use to automate tasks at secific entervals
+	
+	In Linux, cron is a system-level scheduler.
+	In Node.js, we use cron job libraries to achieve the same functionality inside our app.
+
+	node-cron	- Simple, popular library to run cron jobs in pure Node.js    
+	node-schedule	- More flexible, supports specific dates and rules            
+	agenda	- Advanced job scheduler using MongoDB                        
+	bull / bullmq	- Job queue and scheduler backed by Redis (great for scaling) 
+
+	node-cron
+	
+	npm i node-cron
+	
+	corn.schedule('* * * * * *', ()=>{
+		console.log("task running in every sec", new Date().toLocaleString())
+	})
+	
+
+* * * * * *
+│ │ │ │ │ └── Day of the week (0 - 7) (Sunday=0 or 7)
+│ │ │ │ └──── Month (1 - 12)
+│ │ │ └────── Day of the month (1 - 31)
+│ │ └──────── Hour (0 - 23)
+│ └────────── Minute (0 - 59)
+└──────────── Second (optional)
+
+5 * * * * *  At 5 seconds of every minute               
+* 1 * * * *  Every second during minute 1 of each hour  
+* * 1 * * *  Every second during hour 1 AM every day    
+* * * 1 * *  Every second on the 1st day of every month 
+* * * * 1 *  Every second in the month of February      
+* * * * * 1  Every second on Monday 
+
+use case:
+	Email Reminders              
+	Database Cleanup               
+	Backup Jobs                    
+	Analytics Reports           
+	API Polling                 
+
+============================================================
+node-schedule :
+	Similar to node-cron, but allows complex date-based or rule scheduling.
+	
+	npm i node-schedule
+	
+	const date = new Date(2025, 10, 6, 14, 30, 0); // 6 Nov 2025, 2:30 PM
+	
+	schedule.scheduleJob(date, ()=>{
+		console.log('run once on exactly specified date')
+	})
+	
+	RecurrenceRule is an object that defines what minute, hour, day, week, month, etc. a job should run on.
+	
+	const rule = schedule.RecurrenceRule();
+	rule.dayOfWeek =[1,2,3]
+	rule.hour = 10;
+	rule.minute = 30
+	
+	schedule.scheduleJob(rule, () => {
+		console.log('Running at 10:30 AM on Mon, Wed, Fri');
+	});

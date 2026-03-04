@@ -1,0 +1,168 @@
+Callback:
+	A callback is just a function passed as an argument to another function —
+	so that the other function can call it later when its work is done.
+	
+		function greet(name, callback) {
+			console.log("Hello", name);
+			callback(); // calling the function passed in
+		}
+		
+		function sayBye() {
+			console.log("Goodbye!");
+		}
+		
+		greet("Yuvraj", sayBye);
+		
+		output:
+			Hello Yuvraj
+			Goodbye!
+------------------------------------------------------
+Why Do We Need Callback Handling?
+
+	In Node.js, many operations (like reading files, making API calls, or accessing databases) take time.
+	Instead of blocking the program, Node.js runs them asynchronously
+------------------------------------------------------
+Callback Hell:
+		
+		Nested async operations : Each asyn function depends on result of privious one.
+		Anonymous functions : To many callbacks without names
+		Lack of modularity : functions not broken down properly.
+			callback hell :
+
+				function step1(data, callback) {
+					callback(data);
+				}
+				function step2(data, callback) {
+					callback(data + " yuvii");
+				}
+				
+				step1("hello 1", (result1) => {
+					step2(result1, (result2) => {
+						console.log(result2);
+					});
+				});
+				
+		💡 How to Avoid Callback Hell
+			Option 1: Use Named Functions
+				Instead of anonymous inline callbacks, use separate named ones.
+			------------------------
+			Option 2: Use Promises
+				Promises give a .then() chain instead of deep nesting.
+			-----------------------
+			Option 3: Use async/await
+				Async/await is built on top of Promises but reads like synchronous code.
+				
+			------------
+			// used named functions-------------------
+			
+			/* function step1(data, callback) {
+				callback(data);
+			}
+			function step2(data, callback) {
+				callback(data + " yuvii");
+			}
+			
+			step1("hello 1", callback1);
+			
+			function callback1(result1) {
+				step2(result1, callback2);
+			}
+			
+			function callback2(result2) {
+				console.log(result2);
+			} */
+			
+			// use promises-------------------------------
+				holds evental result of async operation
+			function step1(data) {
+				return new Promise((resolve) => {
+					resolve(data);
+				});
+			}
+			function step2(data) {
+				return new Promise((resolve) => {
+					resolve(data + " yuvii");
+				});
+			}
+			
+			//chain them using .then()--------
+			
+			// step1("hello")
+			//   .then((result) => step2(result))
+			//   .then((result) => console.log(result));
+			
+			//using async await--------------------------------
+			(async function () {
+			try {
+				const data = await step1("hello");
+				const result = await step2(data);
+				console.log(result);
+			} catch (error) {
+				console.log(error.message);
+			}
+			})();
+			
+			-----------
+------------------------------------------------------
+Error First Callback mechanism :
+	--------------------------------------------------
+	the first argument of callback function is reserved for an error object and second argument is used for the successfull results.
+	
+	function callback(error, result) {
+		if (error) {
+			// Handle the error
+		} else {
+			// Use the result
+		}
+	}
+	
+	EXample reading file:
+		const fs = require("fs");
+		
+		fs.readFile('abc.txt','utf8',(err,result)=>{
+			if(err){
+				console.log(err.message);
+			}
+			console.log("file data: ",data);
+		);
+		
+		Explanation:
+		
+			fs readfile is asynchronous
+			when it complete :
+				-If an error occurs → err is non-null (contains an Error object).
+				-If it succeeds → err is null, and data contains the file contents.
+				
+	--------
+	why use error first callback?
+	Consitency : every async API follows this pattern.
+	Clarity: Easy to know where to check error.
+	Error isolation : Prevent errors form being ignore silently
+	--------
+	Custome example:
+	
+	function division(a,b, callback){
+		if(b === 0){
+			callback(throw new Error("Division by zero is not allowed"));
+		}else{
+			callback(null, a/b);
+		}
+	}
+	
+	//using the function
+	divide(10, 2, (err, result)=>{
+		if(err) console.log(err.message);
+		
+		console.log("Result",result);
+	});
+	
+	divide(10, 0, (err, result)=>{
+		if(err) console.log(err.message);
+		
+		console.log("Result",result);
+	});
+	
+	output:
+			Result 5
+			Division by zero is not allowed
+		

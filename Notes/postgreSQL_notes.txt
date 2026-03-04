@@ -1,0 +1,443 @@
+PostgreSQL:
+	#pgAdmin 4
+	password: Nimap@29
+---------------------------------------
+	PostgreSQL is an free open-source database system that supports both relational (SQL) and non-relational (JSON) queries.
+
+
+
+PostgreSQL is powerful opensource, open-source, relational database management system(RDBMS) known for its extensibility, compliance with SQL standards, and strong reputation for reliability and flexibility.
+
+	-support advansed data types
+	-offers ecellent performance
+	-extensive functionalities
+	-robust security
+	-user friendlyde
+	-developers can easily create plugins to meat spe
+	
+	
+---------------------------
+>psql -U postgres
+---------------
+two ways of connection to a database and execute SQL statements on it:
+	-SQL Shell (psql)
+	-pgAdmin 4
+	
+	psql:-
+		create DB- create database Db_name;
+		use DB- \c database name
+		
+	---------------
+	schema:
+		In PostgreSQL, a schema is a named collection or namespace of database objects such as tables, views, indexes, data types, functions, and operators.
+		
+		Syntax:
+			create schema demo;
+	----------------
+	SQl:
+		structural query language
+		use to read, add, modify, remove informtion form relational databae.
+		
+		DDL:
+			create:
+				used to create database or its objects (like table, index, functions, viiew, store procedure and triggers)
+				create table table_name (col_name datatype, ...);
+			-----------------------------------------------
+			drop:
+				drop table table_name;
+			-----------------------------------------------
+			rename:
+				alter table public.students rename to studentsssss;
+			-----------------------------------------------
+			alter:
+				use to alter the structure of database
+			
+				Add coloumn:
+					alter table students
+					add marks int;
+					
+				change datatype of column:
+					ALTER TABLE cars
+					ALTER COLUMN color TYPE VARCHAR(30);
+					
+				Drop column:
+					ALTER TABLE cars
+					DROP COLUMN color;
+			-----------------------------------------------
+			truncate:
+				Used to remove all records from table.
+				 truncate public.students;
+			-----------------------------------------------
+		DML:
+			insert:
+					inser into students values (1,'abc');	
+				-insert multiple rows:
+					insert into students values (2,'stud1'),(3,'stud3');
+					
+					-string values must be written with apostrophes
+			update:
+				The UPDATE statement is used to modify the value(s) in existing records in a table.
+				Be careful, if you omit  the  where clause, all records will updated,
+				
+					update students set marks = 99,name ='ram' where id = 1;
+				
+				
+			delete:
+				delete from students where id =2;
+				DELETE 1
+				
+				Delete all records:
+				delete from table_name;
+			
+		DCL:
+			grant 
+			revoke
+			
+		TCL:
+			commit
+			savepoint
+			rollback
+			
+		DQL:
+			select:
+				retrive data from database
+				- * to select all coloumns.
+				- distinct rows using DISTINCT keyword
+				- sort rows using orderby
+				- filter rows using where clause
+				- select subset of rows from a table using limit and fetch (OFFSET 2 { ROW | ROWS } FETCH { FIRST | NEXT } [ row_count ] { ROW | ROWS } ONLY;
+)
+				- group rows into groups using group by
+				- filter groups using having clause
+				- join tables using joins (INNER JOIN , LEFT JOIN, FULL OUTER JOIN, CROSS JOIN);
+				- perform set operatons using UNION, INTERSECT, and EXCEPT
+			
+			-specific coloumns:
+				select name, email from students.
+				
+			-Return al coloumns:
+				select * from students;
+				
+			-select DISTINCT records:
+				select DISTINCT name from students;
+				
+			-count DISTINCT
+				select DISTINCT COUNT(name) from students;
+		
+			-
+--------------------------------------------------------------------------------------------------------
+Operators in where clause:
+	
+	= Equal to :
+	
+----------------------------------------------------
+	< Less than:
+	
+	------------------------------------------------
+	> greater than:
+	
+	------------------------------------------------
+	<= lessthan or equal to
+	
+	------------------------------------------------
+	>=	Greater than or equal to
+		SELECT * FROM cars
+		WHERE year >= 1975;
+	------------------------------------------------
+	<>	Not equal to
+		SELECT * FROM cars
+		WHERE brand <> 'Volvo';
+	-------------------------------------------------
+	!=	Not equal to
+		SELECT * FROM cars
+		WHERE brand != 'Volvo';
+	-------------------------------------------------
+	LIKE	Check if a value matches a pattern (case sensitive)
+	
+		There are two wildcards often used in conjunction with the LIKE operator:
+
+			% The percent sign represents zero, one, or multiple characters
+			_ The underscore sign represents one, single character
+			
+		SELECT * FROM car
+		WHERE model like 'M%';
+	-------------------------------------------------
+	ILIKE	Check if a value matches a pattern (case insensitive)
+		SELECT * FROM car
+		WHERE model ilike 'M%';
+	-------------------------------------------------
+	AND	Logical AND
+		SELECT * FROM car
+		WHERE brand = 'Volvo' AND price = 10000;
+	-------------------------------------------------
+	OR	Logical OR
+		SELECT * FROM car
+		WHERE brand = 'Volvo' OR price = 10000;
+	-------------------------------------------------
+	IN	check if any value matches any value in a list
+		SELECT * FROM car 
+		WHERE brands IN ('Volvo','Ford');
+	-------------------------------------------------
+	BETWEEN	Check if a value is between a range of values
+		SELECT * FROM car
+		WHERE price BETWEEN 10000 and 20000;
+		
+		SELECT * FROM 	orders 	WHERE order_date between '2025-09-29' to '2026-01-29';
+	-------------------------------------------------
+	IS NULL	Check if a value is NULL
+		SELECT * FROM car
+		WHERE model is null;
+	-------------------------------------------------
+	NOT	Makes a negative result e.g. NOT LIKE, NOT IN, NOT BETWEEN,NOT NULL
+		SELECT * FROM cars 
+		WHERE brand NOT LIKE 'B%';
+
+-------------------------------------------------------------------------------
+OFFSET start { ROW | ROWS } FETCH { FIRST | NEXT } [ row_count ] { ROW | ROWS } ONLY; :-
+
+	fetch first three rows:
+		select * from student order by id fetch first 3 rows only;
+		
+	skip first 3 rows and fetch next 2 rows :
+		select * from students order by id offset 3 rows fetch next 2 rows only;
+-------------------------------------------------------------------------------
+UNION, UNION ALL, INTERSECT, and EXCEPT:
+
+UNION, INTERSECT, and EXCEPT are set operations used to combine or compare the results of two or more SELECT queries.
+
+	UNION
+		conmines rows from two queries retrning all distinct rows.
+		Duplicate rows are removed by default.
+		and use UNION ALL to include duplicate,
+		
+		select col1 from table1
+		union
+		select col1 from table2
+		
+	INTERSECT
+		Returns only the rows that appear in both query results (common rows).
+		Duplicate rows removed by default; INTERSECT ALL can include duplicates
+			
+		select col1 from table1
+		INTERSECT
+		select col1 from table2
+	
+	EXCEPT
+		Returns rows from the first query that do not appear in the second query.
+		Removes duplicates by default; EXCEPT ALL includes duplicates.
+	
+Important Notes
+Each query must return the same number of columns.
+
+Corresponding columns must have compatible data types.
+
+The column order should be the same in all queries.
+
+You can use ORDER BY after the final query to sort the combined result
+-------------------------------------------------------------
+GROUP BY :
+	use to group rows that have same values in specified columns into summery rows. and commmenly used with aggregate functions to perform calculations on each group.
+	
+		SELECT column1, aggregate_function(column2)
+		FROM table_name
+		GROUP BY column1;
+		
+--------------------------------------------------
+HAVING:
+	use to apply conditions after group by
+	
+	SELECT COUNT(customer_id), country FROM customers GROUP BY country HAVING count(customer_id) > 5;
+--------------------------------------------------
+EXIST operator:	
+	is use to check the existance of record in a subquery
+	EXIST operator return true if subquery returns one or more records.
+	
+	select * from customer.customer_name where EXIST (select order_id from order where customer_id = customer.customer_id);
+--------------------------------------------------
+ANY:
+	Allows comparing a value to set ofvalues produced by subquery and returns true if the condition holds at least one value in that set.
+	
+		Example : List products that have ANY records in the order_details table with a quantity larger than 120:
+			select product_name form products where product_id = ANY (SELECT product_id from order_details where quantity > 120);
+--------------------------------------------------
+ALL:
+	returns a boolean value as result
+	return TRUE if all subquery values meet the consdition
+	
+	Example
+		List the products if ALL the records in the order_details with quantity larger than 10.
+		Note: This will of course return FALSE because the quantity column has many different values (not only the value of 10):
+		
+			select product_name from products where product_id = ALL (select product_id from order_details where quantity > 10);
+--------------------------------------------------
+CASTING:
+	converting value from one data type to another.
+	
+	two main ways to cast a value:
+		-using sql standard cast function
+		
+			CAST(VALUE AS TARGET_DAT_ATYPE);
+			
+		-Using the PostgreSQL-specific shorthand operator :: :-
+			
+			value::target_data_type
+
+	Ex-
+		SELECT CAST('123' AS INTEGER);
+		-- or equivalently
+		SELECT '123'::INTEGER;
+--------------------------------------------------------
+Aggregate functions
+	count():
+		count the number of rows that matches the specified condition in query;
+			select COUNT(id) as "Total_Stud" from students;
+	----------------------------------------------------
+	sum()  :
+		returns the total sum of numeric column.
+		
+		select SUM(marks) from students.
+	----------------------------------------------------
+	min()  :
+		return smallest value of selected column
+		
+			select min(marks) from students;
+	----------------------------------------------------
+	max()   :
+		return largest value of selected column;
+			select max(marks) from students;
+	----------------------------------------------------
+	avg() :
+		returns the average value of numeric column.
+		
+		select AVG(marks) from students;
+	----------------------------------------------------
+	When you use MIN() or MAX(), the returned column will be named min or max by default. To give the column a new name, use the AS keyword.	
+--------------------------------------------------------
+Mathematical Operators:
+	Operator  |  Description                                   |  Example    |  Result     
+	----------+------------------------------------------------+-------------+-------------
+	+         |  Addition                                      |  5 + 8      |  13         
+	-         |  Subtraction                                   |  6 - 9      |  -3         
+	*         |  Multiplication                                |  5 * 8      |  40         
+	/         |  Division (integer division truncates result)  |  15 / 3     |  5          
+	%         |  Modulo (remainder)                            |  15 % 2     |  1          
+	^         |  Exponentiation (power)                        |  4.0 ^ 2.0  |  16         
+			|                                                |  /          |  Square root
+	!         |  Factorial                                     |  ! 6        |  720        
+	@         |  Absolute value                                |  @ -15.07   |  15.07      
+		
+	Operator  |  Description          |  Example   |  Result
+	----------+-----------------------+------------+--------
+	&         |  Bitwise AND          |  53 & 38   |  36    
+	|         |  Bitwise OR           |  53 | 38   |  55    
+	#         |  Bitwise XOR          |  53 # 38   |  19    
+	~         |  Bitwise NOT          |  ~ 38      |  -39   
+	<<        |  Bitwise shift left   |  25 << 2   |  100   
+	>>        |  Bitwise shift right  |  120 >> 3  |  15    
+-------------------------------------------------------------------------------------------
+where clause:
+	where clause use to filter records.
+	
+	select * from students where student marks > 90;
+-------------------------------------------------------------------------------------------
+Sort Data:
+	ORDER BY is used to sort datain ascending(By Default ASC) and descending(DESC) order.
+	
+		Ascending:
+		
+			select * from students ORDER BY marks;
+	
+		Descending:
+			select * from student ORDER BY marks DESC;
+-------------------------------------------------------------------------------------------
+LIMIT Clause:
+	use to limit max number of records to return.
+	
+	select * from students LIMIT 2;
+-------------------------------------------------------------------------------------------
+OFFSET:
+	OFFSET clause is use to specify where to start selecting records.
+		select * from students OFFSET 3;
+		
+	limit and offset together:
+		select * from studens LIMIT 3 OFFSET 3
+-------------------------------------------------------------------------------------------
+Aliases:
+	used to give a table or a column in a table temporary name.
+	use to make column name more readable.
+	only exists for the duration of that query.
+	created with 'as' query.
+	
+	Concatenate Columns
+		The AS keyword is often used when two or more fields are concatenated into one.
+		To concatenate two fields use ||.
+	
+		Ex-
+			select name || ' ' ||marks as "stud" from students;
+			
+			output-  stud
+					abc 50
+					xyz 70
+-------------------------------------------------------------------------------------------
+JOIN :
+	
+	A JOIN clause is used to combine rows from two or more tables, based on a related column between them.
+	
+	--------------------------------------------------------------------------------------
+	INNER JOIN: Returns records that have matching values in both tables
+		Note: JOIN and INNER JOIN will give the same result.
+			INNER is the default join type for JOIN, so when you write JOIN the parser actually writes INNER JOIN.
+	---------------------------------------------------------------------------------------
+	LEFT JOIN (LEFT OUTER JOIN) : Returns all records from the left table, and the matched records from the right table
+	
+	---------------------------------------------------------------------------------------
+	RIGHT JOIN (RIGHT OUTER JOIN): Returns all records from the right table, and the matched records from the left table
+	
+	---------------------------------------------------------------------------------------
+	FULL JOIN (FULL OUTER JOIN): Returns all records when there is a match in either left or right table
+	---------------------------------------------------------------------------------------
+	CROSS JOIN:
+		returns the Cartesian product of rows from two tables. This means it combines each row from the first table with every row from the second table, producing all possible pairs of rows.
+		
+			SELECT columns
+			FROM table1
+			CROSS JOIN table2;
+================================================================================================================================
+Debugging in Postgres:
+	------------------------------------------------------
+	#Manual debugging with RSISE NOTICE:
+		-insert raise notice in  your postgresql code to output variable value or execution progress to client or server logs
+	DO
+	$BODY$
+	DECLARE
+	
+		_emp_id int := 2;
+	
+		BEGIN
+			raise notice 'step 1 : Employee id is %',_emp_id;
+		END
+	$BODY$
+				
+	| Line                | What it does                                    |
+	| ------------------- | ----------------------------------------------- |
+	| `DO $$`             | Starts an anonymous code block                  |
+	| `DECLARE`           | Begins the variable declaration section         |
+	| `_emp_id int := 2;` | Declares a variable and assigns it a value      |
+	| `BEGIN`             | Starts the executable part                      |
+	| `RAISE NOTICE ...`  | Prints a debug message to the PostgreSQL client |
+	| `END;`              | Ends the block                                  |
+	| `$$;`               | Closes the block                                |
+	
+------------------------------------------------------------------------------------------------------------------------
+\l             -- list all databases
+\c mydb        -- connect to database
+\dt            -- list all tables
+\d users       -- describe a table
+\du            -- list users
+\q             -- quit shell
+
+CREATE DATABASE testdb;
+\c testdb
+CREATE TABLE users (id SERIAL PRIMARY KEY, name TEXT);
+INSERT INTO users (name) VALUES ('Alice');
+SELECT * FROM users;

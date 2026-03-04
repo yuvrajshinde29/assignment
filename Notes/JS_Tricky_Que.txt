@@ -1,0 +1,1121 @@
+__filename is a global variable that stores the absolute path of the current file
+================================================================================================================================================================
+console.log(0.1*3==0.3);    //false -(0.1*3 = 0.30000000000000004)
+--------------
+ for(var i=0; i<10; i++) 
+ {
+	setTimeout(()=> {
+		console.log(i); 
+	},1000) 
+ } 
+ //output:-
+			10
+			10
+			10
+			10
+			10
+			10
+			10
+			10
+			10
+			10
+ ---------
+ for (let i = 0; i < 10; i++) {
+  setTimeout(() => {
+    console.log(i);
+  }, 0);
+}
+/* output: 0
+           1
+           2
+           3
+           4
+           5
+           6
+           7
+           8
+           9
+ */
+ var is function scope so it means it is shared accross all loop iterations and essentially a single variable in memory.
+ every time callback of setTimeout is schedules
+ --
+ When you use let in the for loop, the variable i is block-scoped. This means a new i is created for each iteration of the loop, and each setTimeout callback forms a closure over the value of i from its specific iteration.
+============================================
+function outer(){ 
+	var b = 2 
+	function inner(){
+		b++; 
+		console.log(b) 
+		var b = 3; 
+	} 
+	inner(); 
+} 
+outer(); 
+//output: NaN
+//var has function scope so inside innner() b is declared and used before declartion (Hoisting) b become undefined and after performing increament it throw NaN because undefined is not Number 
+==================================================
+	(function () { 				//---------------------------------------------------------------------------------dont understand 
+		try { 
+			throw new Error(); 
+		} catch (x) { 
+			var x = 1, y = 2; 
+			console.log(x); 
+		} 
+		console.log(x); 
+		console.log(y); 
+	})(); 
+	output:
+		1
+		undefined
+		2
+		
+		-----------
+		function() {
+			var x; // hoisted from var x = 1 inside catch
+			var y; // hoisted from var y = 2 inside catch
+			try { throw new Error(); }
+			catch (x) { // block-scoped x (different from outer x)
+				x = 1;    // modifies inner x (the catch parameter)
+				y = 2;    // modifies outer y (since var y belongs to outer scope)
+				console.log(x); // prints 1 (inner x)
+			}
+			console.log(x); // outer x is still undefined
+			console.log(y); // outer y is 2
+		}
+			
+	
+======================================================
+	console.log(true + 1); //output: 2 - this happens due to process called coercion 
+			
+			+ operater can be used for addition with number or string concatenation with strings  
+======================================================
+	Promise.resolve(3) 
+		.then((res)=>{ console.log(res) })
+		.catch() 
+		.then() 
+		.then(res=>res) 
+		.then() 
+		.catch() 
+		.then((res)=>{ console.log(res) }) 
+		
+		-> 3
+		   undefined
+======================================================
+		console.log([2] === [2]); //array are object so it === checks ref.
+======================================================	
+		test(); 
+		function test() { 
+			return true 
+		} //dont print any thing
+======================================================
+		Loose Equality (==) Rules: When using the == operator, JavaScript performs type coercion, attempting to convert values to a common type before comparison.
+		----------------
+		3 > 2 > 1 :--> true > 1 --> 1 > 1 --> false
+		----------------
+		[] + [] //output: convert to string so "" + "" = 
+		----------------
+		[] + {}	//output: [Obbjet Object]
+		----------------
+		{} + {}	//[object Object][object Object]
+		----------------
+		{} + []	//[object Object]
+		
+			{} -> [object Object]
+			[] -> ""
+		----------------
+		true == '1' // true
+		----------------
+		true === '1' //false
+		----------------
+		null == 0 //false - null is only loosely equal to undefined
+		----------------
+		null >= 0 	
+		
+		Contrast with Other Comparisons: This behavior is different from other comparison operators (like > or >=), which do perform a numeric conversion.
+		console.log(null >= 0); would return true because, in a relational comparison, null is coerced to 0.
+		console.log(null > 0); would return false because 0 > 0 is false. 
+		----------------
+		NaN === NaN //false - Unique Identity :NaN is unique because it's a numeric type that doesn't have a specific value. 
+		----------------
+		typeof null 	// undefined
+		----------------
+		"b" + "a" + +"a" + "a" 	//baaa
+		----------------
+		
+==================================================================================================
+setTimeout Tricky Question:
+	https://tonymike99.hashnode.dev/tricky-settimeout-interview-questions-explained#heading-what-will-be-the-output-of-this-code
+	----------------------------------------
+	1)
+		for (let i = 0; i < 5; i++) {
+			setTimeout(() => console.log(i), 0);
+		}
+		
+		// OUTPUT = 0 1 2 3 4
+	2)
+		let j = 0;
+		for (j = 0; j < 5; j++) {
+			setTimeout(() => console.log(j), 0);
+		}
+		
+		// OUTPUT = 5 5 5 5 5
+		//let variabe is vreated before for loop this means that their is no new block scope created for every iteration.so this bolck scope is common for the entire for loop
+	3)
+		for (var k = 0; k < 5; k++) {
+			setTimeout(() => console.log(k), 0);
+		}
+		
+		// OUTPUT = 5 5 5 5 5
+	
+	4)	
+		var k;
+		for (k = 0; k < 5; k++) {
+			setTimeout(() => console.log(k), 0);
+		}
+		
+		// OUTPUT = 5 5 5 5 5
+==================================================================================================
+	console.log("All Users : ",JSON.stringify(users,(key , value)=>{
+		if(key == 'email') return value.toLowerCase()
+		return value
+	},3))--- replacer replace the value of specific key
+	
+	console.log(JSON.stringify(user,[email],3)---only print email not other keys-values also adds 3 spaces
+==================================================================================================
+ // write a sum function such that by calling function both calls should give 6 as a result
+console.log(sum(1, 5));
+console.log(sum(1)(5));
+
+function sum(a,b){
+   if(b != undefined){
+		return a+b;
+   }
+   return (b)=>{
+		return a+b;
+   }
+}
+=======================================
+modify this code so that result will print 1 to 9 with the gap of 1 second
+async function run(){
+    for(let i=1;i<=10;i++){
+            setTimeout(()=> {
+                console.log(i)
+                resolve();
+            }, 1000 * i); 		// increase the time for each time out * i
+    }
+}
+
+run();
+=======================================
+You have one array of even length eg [ 1, 1, 2, 3, 5, 7, 7, 4] and you have to divide this array into two different array of half length such that both arrays should have distinct elements.
+We can convert above array into [1, 2, 3, 7] and [ 1, 5, 7, 4] so return true if we can do that else return false.
+
+function sortArray(arr) {
+  let map = new Map();
+  let arr1 = [];
+  let arr2 = [];
+  for (const element of arr) {
+    let count = map.get(element) || 0;
+    if (count >= 2) {
+      console.log("Invalid array");
+      return;
+    }
+    map.set(element, count + 1);
+  }
+  let flag = true;
+  for (const [key, val] of map) {
+    if (val > 1) {
+      arr1.push(key);
+      arr2.push(key);
+    } else {
+      flag ? arr1.push(key) : arr2.push(key);
+      flag = !flag;
+    }
+  }
+  //   console.log(map);
+  console.log("array 1 : ", arr1);
+  console.log("array 2 : ", arr2);
+}
+sortArray([1, 1, 2, 3, 5, 7, 7, 4]);
+===============================
+
+console.log('10' - '2' + '5');	//85
+console.log(true + false - '1' + '2');	//02
+console.log(10 == '10' && '10' - 1 === 9);	true
+->
+========
+let a = '5';
+let b = 5;
+let c = false;
+console.log(a + b - c);	// ('5' + 5 - false) = '55' - false = 55 - 0 = 55;
+========
+
+console.log('5' + 10 - 5);	//505
+console.log(('10' * '2') == (true + true + true + true + true));	//false
+console.log('5' - - '2');	//7
+console.log('3' + 2 * 2 - '1');	//33
+console.log(('3' - '2' + '5') * true);//15
+========
+
+let x = true == 1;	// x = true
+let y = '1' == 1;	// y = true
+let z = '1' === 1;	// z = false
+console.log(x + y + z);
+=======
+async function foo() {
+    console.log('foo start');   //--2
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    console.log('foo end'); //--5
+}
+console.log('Start');   //--1
+setTimeout(() => {
+    console.log('setTimeout 1');    //--4
+}, 0);
+foo();
+setTimeout(() => {
+    console.log('setTimeout 2');    //--6
+}, 0);
+console.log('End'); //--3
+//Output
+// Start
+// foo start
+// End
+// setTimeout 1
+// foo end
+// setTimeout 2
+=======
+
+const arr = [1,"hiii", false, 0, undefined, null, true]; truthy values
+->
+arr.forEach((val) => {
+  if (val || val === 0) console.log(val);
+});
+==============
+Write middleware to check age > 18 or if <18 print something
+app.use((req,res,next)=>{
+
+	let age = req.body.age || req.query.age
+	if(!age){
+		return res.json({msg:'Error: age is required'})
+	}
+	if(age < 18){
+		return res.json({msg:"Age must > 18"});
+	}
+	next()
+})
+==============
+Sequelize raw query to seuqelize query —------------------------------------------------------------------------------------------------------------
+//orderDetail
+// orderTransactions
+//transactionStatus
+orderDetail.findAll({
+    include : {
+        model : orderTransactions,
+        attributes : [transactionNo, transactionDate],
+        include :  {
+            model : transactionStatus,
+            attributes : [ name]
+        }
+    },
+    exclude : {
+        attributes : [ ]
+    }
+   
+})
+===================
+
+console.log("1");
+
+const all = new Promise((res, rej) => {
+   console.log("2")
+}
+)
+console.log("3");
+
+output:1 2 3
+creating a Promise is synchronous.
+Only the resolution or rejection handlers (.then(), .catch()) run asynchronously.
+======================
+What is ORM ???
+
+
+======================
+const p1 = Promise.resolve(1);
+
+p1.then((res) => console.log("1: ",res)); // 1
+
+p1.then((res) => console.log("2: ",res)).catch((err) => console.log(2)); //1
+
+p1.then((res) => {
+  console.log("3: ",res);
+  return "$";
+})
+  .catch((err) => {
+    console.log(err);
+    return "3";
+  })
+  .then((res) => console.log(res)); // 1  $
+
+console.log("hey");
+output:
+hey
+1:  1
+2:  1
+3:  1
+$
+
+=============
+
+Using middleware modify response according to req input, or send different resspone if age is 18 than greater .
+
+=============
+
+12345 *****
+1112131415 *****
+2122232425 *****
+3132333435 ****
+
+
+=============
+
+N = 4;
+Let count = 1;
+while(n > 0) {
+    Let bag = '';
+    for(let i = 0; i < 5; i++{
+        Bag += count;
+        Count++;
+    }
+
+    Count += 5;
+    Bag += ‘******’;
+console.log(bag);
+
+n–;
+=============
+
+Call,apply,bind diff.-------------------------------------------------------------------------------------------------------------------------------------------
+
+Node js Event Loop starting phase process.
+
+
+What will be the priority of execution of the below code.
+console
+let arr = [1,2,3,4,5,6,8,10,11,12,13,14,15];
+let count = 0;
+
+for(let i = 0; i< arr.length -2; i++){
+    for(let j = i + 1; j<arr.length -1; j++) {
+        for(let k = j + 1; k < arr.length; k++) {
+            let sum = arr[i] + arr[j] + arr[k];
+            if(checkExec(arr,sum)){
+                count++;
+            }
+        }
+    }
+}
+
+
+function checkExec(arr,target){
+    return arr.includes(target)
+}
+
+console.log(count)
+
+
+Kartikey sir review questions sahil  nikam;
+
+process.nexTick
+queueMicrotask
+setTimeout
+setImmediate
+==================================
+
+Kartikey Singh
+5:03 PM
+function foo2()
+{
+  return
+  {
+      bar: "hello"
+  };
+}
+console.log(foo2().bar); // output.?	TypeError: Cannot read properties of undefined (reading 'bar')
+										when return statement followed by line break js automatically insert semicolon and it return undefined.
+
+
+Remove the line break after return or put the object literal on the same line as return:
+
+==================================
+
+Kartikey Singh
+5:04 PM
+console.log("1 && 2 = "+(1 && 2));  // output?
+
+A && B
+→ returns A if A is falsy
+→ otherwise, returns B
+==================================
+
+Kartikey Singh
+5:06 PM
+console.log( "A" - "B" + "2");
+console.log( "A" - "B" + "2");  // output? NaN2 :- 	Number("A") -> NaN 
+													Number("B") -> NaN
+													NaN -NaN = NaN + "2" = NaN2
+==================================													
+Kartikey Singh
+5:08 PM
+console.log(1 +  -"1" + "2");	//02
+console.log(1 +  -"1" + "2");
+
+==================================
+Understanding Object Keys in JavaScript
+In JavaScript, when you use an object as a key in another object (like a[b]), JavaScript automatically converts the key to a string.
+
+
+var a={},
+    b={key:'b'},
+    c={key:'c'};
+
+a[b]=123;
+a[c]=456;
+
+console.log(a[b]); // output?
+
+In JavaScript, object keys can only be strings or symbols.
+If you try to use an object (like b or c) as a key, JavaScript will implicitly convert it to a string using toString()
+	b.toString() -> "[Object Object]"
+=======================
+Write only one function sum so that both log statements will print result 5
+Kartikey Singh
+5:10 PM
+console.log(sum(2,3)); 
+console.log(sum(2)(3));
+
+ 
+function sum(a, b){
+  if(!b){
+    return function(c){
+      return a + c;
+    }
+  }
+   return a+b;
+}
+console.log(sum(2,3)); 
+console.log(sum(2)(3));
+
+===========================================================
+const arr1= [2,3,1,1,4]---------------------------------------------------------------------------------------------------------------------
+function calculate(arr){
+let lastValIndex = arr.length - 1;
+let lastval = arr[lastValIndex]
+let result = [];
+let count = 0;
+for(let i =1; i <arr.length; i++){
+
+  if(arr[i] + i ===  lastval){
+    count++;
+  }
+  
+  for(let i = 0; i < count; i++) {
+    result[i] = true;
+  }
+  
+}
+return result
+}
+
+console.log(calculate(arr1))
+
+==================================
+function test(){
+    try{
+        return 1;
+    }catch (err){
+        return 2;
+    }finally{
+        return 3;
+    }
+    
+}
+
+console.log(test());
+==================================
+const obj = {
+  a: "foo",
+  b: function () {
+    console.log(this.a);
+  },
+};
+
+
+const c = obj.b;
+c();
+----
+The value of this depends on how a function is called:
+
+Method call: obj.b() → this = obj
+
+Standalone function call: c() → this = global object (or undefined in strict mode)
+==================================
+function outer(){
+       var b = 2
+    function inner(){
+        b++;
+        console.log(b)
+        var b = 3;
+    }
+    inner();
+}
+outer();
+==================================
+a=10;	
+Var a;
+console.log(a);//10
+==================================
+const a;		//--SyntaxError: Missing initializer in const declaration
+console.log(typeof a == typeof b);
+--
+let a;
+console.log(typeof a == typeof b); // undefined == undefined - true
+==================================
+console.log(1);
+setTimeout(()=>{
+  console.log(2);
+},1000)
+
+console.log(3);
+==================================
+function test(...args ) {
+  console.log(args)
+}
+test()	// []
+==================================
+async function test(...args ) {
+  console.log(args)
+  console.log(await 1)
+}
+test()
+==================================
+function foo() {
+  try {
+    throw new Error('e');
+  } catch (x) {
+    var x = 1;
+    var z = 2;
+    console.log(x);
+    console.log(z);
+  }
+  
+  console.log(x);
+  console.log(z);
+}
+//output:
+1
+2
+undefined
+2
+
+==================================
+
+Hover over a message to pin itkeep
+keep
+Pin message
+==================================
+
+function foo() {
+var x;
+var z;
+  try {
+    throw new Error('e');
+  } catch (x) {
+     x = 1;
+    z = 2;
+    console.log(x);
+    console.log(z);
+  }
+  
+  console.log(x);
+  console.log(z);
+}
+output:
+1
+2
+undefined
+2
+==================================
+function timer(cb) {
+  return new Promise((resolve,reject) => {
+    cb(resolve,reject);
+  })
+}
+async function foo() {
+    
+    console.log(1);
+    
+    timer(b).then((res) => {
+      console.log(3);
+    })   
+}
+function b(res,rej) {
+  return setTimeout(()=>{
+    console.log(2);
+    res()
+  },1000)
+}
+
+
+foo();
+
+
+PERFECT SOLUTION :	--------------------------------------------------------------------------------------------------------------------------------------
+
+
+function foo() {
+  console.log(1);
+  
+  const t = setTimeout(function() {
+  console.log(2);
+  }, 1000);
+
+  setTimeout(()=> {
+    console.log(3)
+  },t._idleTimeout+1);
+}
+
+foo();
+async function firstFunc() {
+  console.log(1)
+ await new Promise((resolve,reject)=> (setTimeout( resolve(console.log(2)) , 1000)))
+  console.log(3)
+}
+
+firstFunc()
+
+==================================
+async function firstFunc() {
+  console.log(1)
+  await new Promise((resolve,reject)=> setTimeout( ()=> resolve(console.log(2)) , 1000))	//console.log() is side-effect only, returns undefined.
+																							//resolve(console.log(...)) first executes the log, then resolves with undefined.
+
+  console.log(3)
+}
+
+firstFunc()
+
+==================================
+Promise.resolve()
+  .then(() => {
+    console.log("1");
+    return Promise.resolve('2');
+  })
+  .then((res) => console.log(res));
+
+Promise.resolve().then(() => console.log("3"));	
+Promise.resolve()
+  .then(() => {
+    console.log("4");
+  })
+  .then(() => {
+    console.log("5");
+    return Promise.resolve();
+  })
+  .then(() => console.log("6"));
+ output:
+1
+3
+4
+5
+2
+6
+==================================
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+Javascript tricky questions
+eg. console.log("2" + 2)
+closure
+scope
+let var const diff
+lexical scope
+data types
+es6 features
+functions and function types
+hoisting
+loops
+operators
+basic promise
+===================================================
+
+let arr = []
+arr.push(1)
+arr.key = 2;//---
+console.log('arraylength: 'arr.length ,'array is: ',arr) //-length is one because .length counts only indexes not keys
+solution: 1, [1, key: 2]
+
+--arrays are objects.
+
+You can assign arbitrary properties to an array, like arr.key = 2.
+But these are not array elements. The .length property only counts numeric indices (0, 1, 2…) — not object properties.
+
+	Arrays are special kinds of objects:
+		-each item has a numeric indexes.
+			let arr = [10, 20, 30]
+					    1   2   3
+						
+		Named properties (or keys ) are like normal obj properties:
+			arr.name = 'myArr'
+			aarray now has  a property name
+			
+			// but arr.length is still 3, because length counts only numeric indices
+===================================================
+100 que-
+	
+	console.log(typeof typeof typeof true)  --js typeof return datatype of a variable as string
+		output: string because: typeof true is "boolean" now typeof "boolean" is string
+	-------------------------------------------------------
+	let num = new Number(0);
+
+	if(num){
+		console.log("if")
+	}else{
+		console.log('else')
+	}
+	//output: if - because num is an object not primative value 0 so it is truthy even though inner numeric value is 0
+	-------------------------------------------------------
+	let num = 0;
+
+	if(num){
+		console.log("if")
+	}else{
+		console.log('else')
+	}
+	//output: else --num is primative zero and 0 is falsy
+	-------------------------------------------------------
+	str = "string"
+	isNotValid = str+"hello"
+	str = isNotValid
+	console.log(isNotValid)
+	console.log(str)
+	
+	output:
+		stringhello
+		stringhello
+		
+		Because:
+			If you run this in non-strict mode, JavaScript will automatically create those variables in the global scope.
+
+			So behind the scenes it’s as if:
+				var str = "string";
+				var isNotValid = str + "hello";
+			
+			But in strict mode ("use strict"), this would throw an error:
+				ReferenceError: str is not defined
+	-------------------------------------------------------
+	let arr = [1,2,3]
+	let str = "1,2,3"
+	console.log(arr == str)
+	console.log(arr === str) 
+	output- true
+			false
+			
+			the == operator does type coercion 
+			js try to convert the two values to a common type before comparing
+			
+			arr.toString() = "1,2,3"
+	-------------------------------------------------------
+	console.log(1<2<3) //true < 3 -> 1 < 3 -> true
+	console.log(3 > 2 >1)//true > 1 -> 1 > 1 -> false
+	console.log(3>2>=1) //true >= 1 -> 1 >= 1 -> true
+	-------------------------------------------------------
+	function foo(){
+		let x =(y =0 )
+		x++
+		y++
+		return x;
+	}
+	console.log(foo(),typeof x, typeof y)
+	-> 1 undefined number
+		the y is created in global scope.
+		if "use strict" then reference error
+	-------------------------------------------------------
+	let x =1;
+	do{
+		let y = x--;    
+		console.log(x++ - --y)
+	}while(x++ < 5)
+	outut: 0 0 0 0 0
+	-------------------------------------------------------
+	console.log(+[]+[]) -> +""+"" => 0+"" = 0
+		JavaScript type coercion
+		unary plus (+value) tries to convert whatever follows it into a number.
+		+"5"   // 5
+		+true  // 1
+		+false // 0
+		+null  // 0
+		+[]    // +"" -> 0	console.log(+[] === 0) //true
+		
+	-------------------------------------------------------
+	(function(a){
+		return (function(){
+			console.log(a)
+			a=6
+			console.log(a)
+		})()
+	})(21)
+	output:
+		21
+		6
+	-------------------------------------------------------
+	function foo(c){
+		c++;
+		console.log('=',c)
+	}
+	
+	const c = 10;
+	foo(c)
+	console.log(c)
+	output: 11
+			10
+	-------------------------------------------------------
+	console.log([1,2] == [1,2])	//false
+	console.log([1,2] === [1,2])//false
+	-------------------------------------------------------
+	const promise1= Promise.resolve("A")
+	const promise2 = Promise.resolve("B")
+	Promise.race([promise1,promise2]).then(res=>console.log(res))	//A
+	Promise.race([promise2,promise1]).then(res=>console.log(res))	//B
+	-------------------------------------------------------
+	let a= 1
+	let b= 2;	//-dont forgot ; js dont enter enter semicolen implicitely so it cause error
+	[a,b]= [b,a];
+	console.log(a)
+	console.log(b)
+	//swap values
+	-------------------------------------------------------
+	console.log(true+false) //1+0 = 1
+	-------------------------------------------------------
+	foo()
+	function foo(){
+		return "hello"
+	}
+	
+	foo2();	//TypeError: foo2 is not a function- variable is hoisted function is not hoisted
+	
+	var foo2 = ()=>{
+	
+	}
+
+		Type                                            | Hoisted?             | Value before definition  | Safe to call before defined? 
+		------------------------------------------------ | ---------------------| ------------------------ | ---------------------------- 
+		Function Declaration**                           | Fully hoisted        | The full function        |  Yes                        
+		Function Expression** (`var foo = function(){}`) | Partially (var only) | `undefined`              |  No                        
+		Arrow Function** (`var foo = ()=>{}`)            | Partially (var only) | `undefined`              |  No                         
+		let / const function expressions**               | Not hoisted          | TDZ (Temporal Dead Zone) |  No, ReferenceError         
+	-------------------------------------------------------
+	console.log(1+ +"2" + "2")	//32
+	//+"2" is converted to number using unary plus 	operator 
+	
+	console.log(1+ -"1"+"2") //02
+		1 + -1 + "2"
+	-------------------------------------------------------
+	console.log("1");
+
+	new Promise((resolve) => {
+	console.log("2");
+	return setTimeout(() => {
+		console.log("3");
+		resolve(3);
+	}, 0);
+	});
+	
+	setTimeout(function () {
+	console.log("4");
+	}, 1000);
+	
+	setTimeout(function () {
+	console.log("5");
+	}, 0);
+	
+	console.log("6");
+	//output:
+	1
+	2
+	6
+	3
+	5
+	4
+	
+	-------------------------------------------------------
+	console.log("1");
+
+	new Promise((resolve) => {
+		console.log("2");
+		resolve();
+	}).then(() => {
+		console.log("3");
+	});
+	
+	console.log("4");
+	-> 1 2 4 3
+	-------------------------------------------------------
+	let delay = async (item) =>new Promise(
+	(resolve) =>
+    setTimeout(() => {
+      console.log(item);
+      resolve(item);
+		}, Math.random() * 100)
+	);
+
+	console.log("1");
+	let arr = [3, 4, 5, 6];
+	arr.forEach(async (item) => await delay(item));
+	console.log("2");
+	output:
+			[Running] node "c:\Notes\example.js"
+			1
+			2
+			3
+			6
+			4
+			5
+			
+			[Done] exited with code=0 in 0.202 seconds
+			
+			[Running] node "c:\Notes\example.js"
+			1
+			2
+			5
+			6
+			3
+			4
+			
+			[Done] exited with code=0 in 0.312 seconds
+			
+	-------------------------------------------------------
+	function demo(a,b,a) {	
+		return a+b
+	}
+	console.log(demo(10,20,30))
+	#Duplicate parameter name:
+		js allows duplicate parameter names in non-strict mode
+		
+		so here second right most overides privious ones
+		holds the last value passed to it
+	-------------------------------------------------------
+	console.log(('b'+'a' + + 'a'+ 'a').toLowerCase()); //banana
+	//'b'+ 'a'+ NaN +'a'	// baNaNa
+	-------------------------------------------------------
+	let arr =[1,2]
+	arr[6] = 2
+	console.log(arr[5]) //undefined
+	-------------------------------------------------------
+	const arr = [1,2,3]
+arr.length = 2
+console.log(arr)	//[1, 2]
+	-------------------------------------------------------
+	null == undefined → true
+	because JS treats them as the same kind of “no value” in loose equality.
+	console.log(null == 0);        // false
+	console.log(undefined == 0);   // false
+	console.log(null == false);    // false
+	console.log(undefined == false); // false
+	
+	-------------------------------------------------------
+	console.log(10 / 0);   // Infinity
+	console.log(-10 / 0);  // -Infinity
+	console.log(0 / 0);    // NaN
+	-------------------------------------------------------
+	console.log([1,2,3][1]) //2 because it is like 1 is its index
+	-------------------------------------------------------
+	console.log(2 ** 3)	//8 -power of 2
+	-------------------------------------------------------
+	console.log(typeof function(){}) //function
+	console.log(typeof []) //objext
+	-------------------------------------------------------
+	let num1= Math.floor(2.2)	//2
+	console.log(num1)
+	
+	let num2= ~~2.2
+	console.log(num1)	//2
+	-------------------------------------------------------
+	https://www.youtube.com/watch?v=32Wff-8du1E&list=PLAfbhgHDsb7bYDsmP1au9ZS3kP2_ljmvh&index=91
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	
+	-------------------------------------------------------
+	

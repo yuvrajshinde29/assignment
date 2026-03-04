@@ -1,0 +1,53 @@
+A Node.js REPL (Read–Eval–Print–Loop) is an interactive shell that lets you execute JavaScript code directly in the terminal — perfect for quick testing, debugging, or exploring Node.js features.
+
+	Read: takes your input (JavaScript code)
+	
+	Eval: evaluates the code
+	
+	Print: outputs the result
+	
+	Loop: repeats the process until you exit
+	
+	---
+	Step 1 - start repl:
+		open terminal and run 
+		>node
+	---
+	Step 2 — Executing Code in the Node.js REPL
+		- can create variables
+		- can create Multiline blocks
+			The REPL noticed an open curly bracket and therefore assumes you’re writing more than one line of code,
+			To make it easier to read, the REPL adds 3 dots
+			
+			function helloo(){
+			... console.log("i am multiline block");
+			... }
+			undefined
+			
+| Command             | Description                                           |
+| ------------------- | ----------------------------------------------------- |
+| `.help`             | Show available commands                               |
+| `.exit`             | Exit the REPL (or press `Ctrl + C` twice)             |
+| `.save filename.js` | Save your current REPL session to a file              |
+| `.load filename.js` | Load a file into the REPL                             |
+| `.editor`           | Enter multi-line editor mode (finish with `Ctrl + D`) |
+
+You can access Node globals like process, __dirname, require, etc.
+
+Use _ (underscore) to reference the last evaluated result:
+
+> 10 * 2
+20
+> _ + 5
+25
+
+
+You can require modules:
+
+> const fs = require('fs');
+> fs.readdirSync('.');
+---------------------------------------------------------------
+debugging using repl:
+	
+environment variables:
+	

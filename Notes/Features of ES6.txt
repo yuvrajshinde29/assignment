@@ -1,0 +1,32 @@
+Features of ES6:
+----------------------------------------------------------
+1. Let and Const: Block-Scoped Variables
+	Prevents accidental global variable declarations.
+	Provides better readability and maintainability.
+----------------------------------------------------------
+2. Arrow Functions: Concise Syntax for Functions
+	Key Features:
+
+	The implicit return for single-line functions.
+	This lexical scoping helps to do away with the need to use 	the .bind() method.
+----------------------------------------------------------
+3. Template Literals: Enhanced String Interpolation
+		      support multiline string
+----------------------------------------------------------
+4. Default Parameters: Simplified Function Arguments
+----------------------------------------------------------
+5. Destructuring Assignment: Extracting Values Easily
+	Reduces unnecessary time consumption every time an object property 	is required.
+	Makes it possible to assign variables effectively and clearly.
+----------------------------------------------------------
+6. Rest and Spread Operators: Versatile Syntax
+The rest (...) and spread(...) operators help in adding values to the array and object.
+----------------------------------------------------------
+7. Classes: Cleaner Object-Oriented Programming
+	ES6 introduced a feature in the form of classes that were used in 	object and inheritance contrary to other object-oriented 	programming languages.
+----------------------------------------------------------
+8. Modules: Native Import and Export
+----------------------------------------------------------
+9. Promises: Simplified Asynchronous Programming
+----------------------------------------------------------
+10. Enhanced Object Literals: Concise Syntax

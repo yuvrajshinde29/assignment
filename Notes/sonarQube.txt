@@ -1,0 +1,66 @@
+ npm install --save-dev sonar-scanner
+
+wsl --update
+
+docker -version
+Docker version 29.0.1, build eedd969
+
+ # Pull the latest SonarQube image
+ docker pull sonarqube:latest
+
+ # Run SonarQube container
+ docker run -d --name sonarqube -p 9000:9000 sonarqube:latest
+
+access SonarQube at http://localhost:9000
+2.   Login with default credentials: admin/admin
+3.   Change the default password when prompted
+
+
+step 1- create local project
+
+	-project name 
+		which see on sonarQube dashboard
+		node assignment NTTS
+	-project key 
+		unique identifier
+			-no spaces
+			-Used by SonarScanner to link your code to this project
+			-must stay same always(dont update)
+	
+		Recomended format - my-node-app
+		node-assignment-NTTS
+
+	-Main branch name:
+		it is only for sonarQube UI
+		
+		
+	---
+	analize method:
+		locally -
+		
+	-Token
+	 
+	 sqp_17c7b380e679351bde74c85f26affadcc574e2ff
+	 
+	 
+	 js/ts and web
+	 install scanner for npm projects
+	 npm install -g @sonar/scan
+	 
+	 
+	 Execute the scanner:
+	 
+	 sonar \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.token=sqp_17c7b380e679351bde74c85f26affadcc574e2ff \
+  -Dsonar.projectKey=node-assignment-NTTS
+  
+  
+  sonar-scanner -v 
+  sonar-scanner
+  
+  
+  ============
+  
+  learn properties
+  and sonar report

@@ -1,0 +1,61 @@
+Error Handling:
+
+	try-catch
+	
+		try {
+			// Code that might throw an error
+		} catch (error) {
+			// Handle the error
+			console.error(error);
+		} finally {
+			// Runs regardless of error or not
+		}
+	
+	Use throw to manually generate error-
+		throw new Error("Something went wrong!");
+		
+	Create custom error classes by extending the Error object for more meaningful errors:
+		Class MyError{
+			constructor(message){
+				super(message);
+				this.name = "MyError"
+			}
+		}
+		
+	Asynchronous Error Handling:
+		Handles error in Promises using catch or express-async-handler
+	
+	Use async/await with try/catch for cleaner asynchronous flow:
+		async function fetchData() {
+			try {
+				const res = await fetch(url);
+				const data = await res.json();
+				console.log(data);
+			} catch (error) {
+				console.error('Async error:', error);
+			}
+		}
+	--------------------------------------------------------------------------------------------------------------------
+	Global Error Handling
+		In Node.js, handle uncaught exceptions and unhandled promise rejections globally:
+	
+		//uncaughtException:	synchronous Error
+			//it must be at the very top, right after your imports.
+				error happen in sync code and not catch by try...catch
+				
+			process.on('uncaughtException', error => {
+				console.error('Uncaught Exception:', error);
+				process.exit(1); // Exit process to avoid unstable state
+			});
+			
+		//unhandledRejection: async error(Promises)
+			//write after server start
+			this occcur when uncaught promise rejetion
+			
+			process.on('unhandledRejection', (reason, promise) => {
+				console.error('Unhandled Rejection:', reason);
+				process.exit(1);
+			});
+					
+	why Error handling is Important?
+	

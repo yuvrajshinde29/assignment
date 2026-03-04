@@ -1,0 +1,117 @@
+Closure Scope and scope chain
+https://blog.bitsrc.io/understanding-scope-and-scope-chain-in-javascript-f6637978cf53
+Coding Convention
+https://docs.google.com/document/d/1HPMsnA5n3nrOCw2IYj3-x4-_cFYeNFogjZcQ0yfhRyI/edit?tab=t.0
+Datatypes
+https://linuxhint.com/primitive-non-primitive-data-types-javascript/
+Debugging in Postgres
+https://www.youtube.com/watch?v=BTNPp_RpIkc
+ES6 Features
+https://www.boardinfinity.com/blog/top-10-features-of-es6/
+Error Handling
+https://www.freecodecamp.org/news/error-handling-and-try-catch-throw/
+Event Loop
+https://www.youtube.com/watch?v=8zKuNo4ay8E
+Function expression
+https://www.freecodecamp.org/news/when-to-use-a-function-declarations-vs-a-function-expression-70f15152a0a0/
+Hoisting
+https://www.freecodecamp.org/news/what-is-hoisting-in-javascript/
+How to use Postgres
+https://www.youtube.com/watch?v=RVTPJUJEGOE&list=PLCiS1ws9lhBvbGAY3w0853BcUD_4nRYaJ
+Javascript basics
+https://members.codewithmosh.com/courses/enrolled/324741
+Loops
+https://www.freecodecamp.org/news/execution-context-how-javascript-works-behind-the-scenes/
+Naming conventions for Git Branches
+https://medium.com/@abhay.pixolo/naming-conventions-for-git-branches-a-cheatsheet-8549feca2534
+Operators
+https://www.programiz.com/javascript/operators
+Promises and async await
+https://www.freecodecamp.org/news/javascript-async-await-tutorial-learn-callbacks-promises-async-await-by-making-icecream/
+Types of functions
+What is .env?
+https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786
+if else and switch case
+https://www.freecodecamp.org/news/javascript-switch-case-js-switch-statement-example/
+var let and const
+https://www.freecodecamp.org/news/var-let-and-const-whats-the-difference/
+Callback Handling- how to handle asynchronous data, err first callback mechanism.
+https://members.codewithmosh.com/courses/293204/lectures/4509875 (for detailed explanation refer Asynchronous JavaScript section from this course)
+Git Pre Commit (Coding Convention)
+https://docs.google.com/document/d/1yLcc7hQKIcFPfG1HHsTsAg2cqZEAJ6Y_owSfw5Rofuc/edit?tab=t.0#heading=h.lbk24m739dod
+JS Tricky Questions Example
+MongoDB Schema Design
+https://youtu.be/leNCfU5SYR8?si=Ph50h3g2dZTW3B3w
+Promise cycle
+https://members.codewithmosh.com/courses/293204/lectures/4509880 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
+setTimeout Tricky Question Explanation
+https://tonymike99.hashnode.dev/tricky-settimeout-interview-questions-explained#heading-what-will-be-the-output-of-this-code
+Async Await
+https://members.codewithmosh.com/courses/293204/lectures/4509873 https://javascript.info/async-await (detailed explain async-await)
+Types of Functions Javascript
+https://medium.com/@abhiburman20/types-of-functions-in-javascript-31bc32c209cb (simply explained basic functions in javascript)
+REPL
+Clustering
+https://www.youtube.com/watch?v=6xIbVPyh9wo https://gist.github.com/learncodeacademy/954568155105f4ff3599
+Express
+https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction https://www.tutorialspoint.com/expressjs/index.htm
+Middleware
+https://members.codewithmosh.com/courses/293204/lectures/4509839
+Designing Databases
+https://members.codewithmosh.com/courses/525068/lectures/9880339
+REST API
+(for this refer entire section Building RESTful API's Using Express) https://members.codewithmosh.com/courses/293204/lectures/4509485
+REST API conventions
+https://restfulapi.net/resource-naming/
+Authentication- Bearer Token, Basic Auth etc
+https://members.codewithmosh.com/courses/293204/lectures/4510506 (for detailed explanation refer Authentication and Authorization section of codewithmosh)
+Multer
+https://medium.com/javascript-in-plain-english/uploading-files-using -multer-on-server-in-nodejs-and-expressjs-5f4e621ccc67
+sequelize - ORM for Mysql
+https://sequelize.org/ (official site for sequelize) https://bezkoder.com/node-js-express-sequelize-mysql/ (In this article explained CRUD operation with sequlize and mysql )
+Read Data from NQTT
+Assignment 1 (Part 1)
+https://docs.google.com/document/d/1rvNhZn-lMjnbTEgxrDXmvtxI17wsHUz0DHhM_y8SNJc/edit?tab=t.0
+Session Handling
+https://www.codementor.io/@mayowa.a/ how-to-build-a-simple-session-based-authentication- system-with-nodejs-from-scratch-6vn67mcy3
+MVC architecture
+https://www.udemy.com/course/nodejs-express- mongodb-bootcamp/learn/lecture/15065070#overview
+Schedular, Cron Jobs
+https://medium.com/javascript-in-plain-english/how-to-schedule -cron-jobs-in-node-js-897215e2e5d3
+Passport - for Single Sign On
+nodemailer
+https://www.udemy.com/course/nodejs-express-mongodb-bootcamp /learn/lecture/15065316#overview
+Assignment 1 (Part 2)
+https://docs.google.com/document/d/19_v09teV2d_ZNPoKHCxzpWtmexfCLE4hb7zCbli6CMc/edit?tab=t.0#heading=h.e1k5qdhrlvk2
+Assignment 1 (Part 3)
+https://docs.google.com/document/d/15H7tMbjPao_cGKZA89v2sBxryG7wZgbsOTJxoQemlXs/edit?tab=t.0
+Tokenization
+ORM
+https://medium.com/javascript-in-plain-english/best -orm-libraries-for-javascript-8674c4d49119
+Serverless Architecture
+Socket- For Real TIme Applications
+Assignment 1 (Part 4)
+https://docs.google.com/document/d/1kCmtGckF-iYH0HBEqTvE_s4xfaAT7f0kKXZnZ6Aa9PM/edit?tab=t.0
+Queue Mechanism
+https://www.freecodecamp.org/news/how-to-use-rabbitmq-with-nodejs/,https://kafka.js.org/
+Serverless
+Worker Thread
+https://dev.to/williamsgqdev/worker-threads-nodejs-2na2
+mongoose - ORM for MongoDB
+https://members.codewithmosh.com/courses/293204/lectures/4510106
+SQL Queries
+https://www.javatpoint.com/sql-tutorial
+Redis - Caching
+https://medium.com/tech-tajawal/introduction-to-caching-redis -node-js-e477eb969eab
+Typescript
+https://www.typescriptlang.org/
+ESLint
+https://eslint.org/
+Node using typescript
+https://nodejs.dev/learn/nodejs-with-typescript https://blog.risingstack.com/building-a-node-js-app-with-typescript-tutorial/
+Understanding basic concept of Mongoose
+https://mongoosejs.com/docs/guide.html
+Fastify
+Restify or Koa
+Chrome DevTools
+https://www.youtube.com/watch?v=gTVpBbFWry8

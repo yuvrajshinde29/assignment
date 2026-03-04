@@ -1,0 +1,103 @@
+Clustering:
+	By default, a Node.js application runs on a single thread (the main event loop) and uses only one CPU core — even if your system has multiple cores
+	
+	The Cluster module in Node.js allows you to create multiple worker processes (copies of your app) that can share the same server port.
+	This way, your app can utilize all CPU cores and handle more requests simultaneously.
+
+	Why We Need Clustering
+	
+		Without clustering:
+			One CPU core is used → wasted potential.
+			If that process crashes, the whole server goes down.
+		With clustering:
+			Multiple processes handle requests concurrently.
+			Each worker uses its own CPU core.
+			If one worker crashes, others continue running (higher availability).
+			
+	How It Works
+
+		The Cluster module creates a master process and multiple worker processes.
+		  -Master process: Manages workers (creates, monitors, restarts them).
+		  -Worker processes: Run the actual server code and handle requests.(runs your Express app)
+		Node’s internal load balancer distributes incoming connections among workers.
+		
+		----
+		-each worker run on same port and nodes internal load-balancer distributes incomming requests among them.
+		==================================
+		Steps to create clusters:
+		cluster.js
+		step 1: import cluster and os
+			
+			const cluster = require("cluster");
+			const os = require("os");
+			
+		step 2: check if process primary or worker process {
+		
+		
+				step 3 :  get number of cpu cores
+					const numCPUs = os.cpus().length;
+					
+				step 4 : create worker for each cpu
+					for(let i=0; i < numCPUs; i++){
+						cluster.fork()
+					}
+					
+				step 4 : listen the dying works and create new worker
+				
+					cluster.on( "exit",()={
+						cluster.fork()
+					}
+		}else{
+		
+			step 5 :  // Worker process: runs your Express app
+				
+				require("../server.js")
+		
+		}
+		--------------
+		cluster.fork() -creates a new Node.js process (a worker)
+		==================================
+🧠 How It Works
+
+	When you run the file (node cluster.js):
+	The master process starts.
+	It creates N workers, one per CPU core.
+	Each worker runs its own Express app.
+	Node’s cluster module load-balances incoming requests among workers.
+	
+	master create workers -> each worker run app
+	
+project-root/
+│
+├── src/
+│   ├── server.js        ← Express app (your routes, middleware, etc.)
+│   ├── routes/          ← optional: route files if app grows
+│   ├── controllers/     ← optional: controller logic
+│   └── utils/           ← optional: helpers
+│
+├── cluster.js           ← Main entry point for clustering
+│
+├── package.json
+└── README.md
+-----------
+const cluster = require("cluster");
+const os = require("os");
+
+if (cluster.isPrimary) {						//In newer versions of Node.js (v16+)-cluster.isPrimary, cluster.isMaster is deprecated.
+  console.log(`Master process started PID : ${process.pid}`);
+
+  const countCPUs = os.cpus().length;
+
+  for (let i = 0; i < countCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+    console.log("Starting a new worker...");
+    cluster.fork();
+  });
+} else {
+  require("./index");
+}
+-----------
